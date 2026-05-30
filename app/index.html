@@ -102,17 +102,31 @@
 <script>
 const STORES = ["Costco", "Cub", "Target", "Other"];
 let DATA = null;
+let audioCtx = null;
+
+// Unlock/resume audio during a direct user gesture — mobile browsers block
+// AudioContext started later from setInterval (autoplay policy), which would
+// otherwise silence the timer beep.
+function initAudio(){
+  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+}
 
 function pad(n){ return String(n).padStart(2,"0"); }
-function parseTime(s){ const [h,m]=s.split(":").map(Number); return h*60+m; }
+function parseTime(s){
+  const parts = String(s||"").split(":").map(Number);
+  const mins = parts[0]*60 + parts[1];
+  return Number.isFinite(mins) ? mins : 18*60; // fall back to 18:00 on malformed input
+}
 function fmtTime(mins){ mins=((mins%1440)+1440)%1440; return pad(Math.floor(mins/60))+":"+pad(mins%60); }
 
 // Scheduler: back-calculate each step's start from serveTime minus the sum of remaining step minutes.
 function startTimes(meal){
   const serve = parseTime(meal.serveTime);
-  const total = meal.steps.reduce((a,s)=>a+(s.min||0),0);
+  const steps = Array.isArray(meal.steps) ? meal.steps : [];
+  const total = steps.reduce((a,s)=>a+(s.min||0),0);
   let elapsed = 0;
-  return meal.steps.map(s => { const start = serve - total + elapsed; elapsed += (s.min||0); return start; });
+  return steps.map(s => { const start = serve - total + elapsed; elapsed += (s.min||0); return start; });
 }
 
 function renderMeals(){
@@ -137,7 +151,7 @@ function renderMeals(){
     `;
     const ul = document.createElement("ul");
     ul.className = "steps";
-    meal.steps.forEach((s,i) => {
+    (meal.steps || []).forEach((s,i) => {
       const li = document.createElement("li");
       const meta = `${s.min} min${s.active ? " · active" : " · unattended"}${s.handoff ? ' · <span class="handoff">hand-off</span>' : ""}`;
       li.innerHTML = `
@@ -181,6 +195,7 @@ function renderMeals(){
 
 function startTimer(btn, mins){
   if (btn.dataset.running) return;
+  try { initAudio(); } catch(e){}
   let remaining = mins*60;
   const label = btn.textContent;
   btn.dataset.running = "1";
@@ -202,9 +217,9 @@ function startTimer(btn, mins){
 }
 
 function ding(){
-  if (navigator.vibrate) navigator.vibrate([400,150,400]);
   try {
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    if (navigator.vibrate) navigator.vibrate([400,150,400]);
+    const ctx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
     const o = ctx.createOscillator(); const g = ctx.createGain();
     o.connect(g); g.connect(ctx.destination); o.type = "square"; o.frequency.value = 880;
     g.gain.setValueAtTime(0.2, ctx.currentTime);
@@ -227,7 +242,8 @@ function renderShopping(){
       byStore[store].forEach(it => {
         const row = document.createElement("div");
         row.className = "item" + (it.onHand ? " onhand" : "");
-        const opts = STORES.map(s=>`<option ${s===it.store?"selected":""}>${s}</option>`).join("");
+        const itemStores = STORES.includes(it.store) ? STORES : [...STORES, it.store];
+        const opts = itemStores.map(s=>`<option ${s===it.store?"selected":""}>${s}</option>`).join("");
         row.innerHTML = `
           <input type="checkbox" ${it.onHand?"checked":""}>
           <span class="item-name">${it.name}</span>
@@ -254,9 +270,11 @@ document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()
 fetch("data/week.json")
   .then(r => { if(!r.ok) throw new Error("week.json "+r.status); return r.json(); })
   .then(d => {
-    DATA = d;
-    document.getElementById("weekOf").textContent = "Week of " + d.weekOf;
-    document.getElementById("provisional").hidden = !d.provisional;
+    DATA = d || {};
+    DATA.meals = Array.isArray(DATA.meals) ? DATA.meals : [];
+    DATA.grocery = Array.isArray(DATA.grocery) ? DATA.grocery : [];
+    document.getElementById("weekOf").textContent = DATA.weekOf ? "Week of " + DATA.weekOf : "";
+    document.getElementById("provisional").hidden = !DATA.provisional;
     renderMeals();
     renderShopping();
   })
