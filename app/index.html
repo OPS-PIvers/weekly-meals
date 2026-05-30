@@ -517,7 +517,7 @@ function renderRecipe(){
   $('#screen-recipe #back').addEventListener('click',()=>show('week'));
   const inp=$('#screen-recipe #serve');
   inp.addEventListener('input',()=>{
-    const v=inp.value; if(!parseHM(v))return;
+    const v=inp.value; if(parseHM(v)===null)return;
     STATE.serve[m.id]=v; save();
     const ns=schedule(m);
     $('#beginat').textContent=fmtClock(ns.start);
@@ -682,7 +682,7 @@ function renderShopping(){
 function itemRow(it){
   const s=shopState(it);
   return `<div class="item ${s.checked?'checked':''} ${s.have?'have-it':''}">
-    <button class="check" data-check="${it.id}" aria-label="Mark ${esc(it.n)} as in the cart">${IC.check}</button>
+    <button class="check" data-check="${it.id}" aria-pressed="${s.checked}" aria-label="Mark ${esc(it.n)} as in the cart">${IC.check}</button>
     <div>
       <div><span class="nm">${esc(it.n)}</span><span class="qty">${esc(it.q)}</span></div>
       ${it.note?`<div class="note ${it.warn?'warn':''}">${esc(it.note)}</div>`:''}
@@ -712,7 +712,7 @@ function openSheet(id){
     <p class="ssub">${esc(DATA.items.find(i=>i.id===id).n)}</p>`;
   DATA.storeOrder.forEach(store=>{
     const info=DATA.stores[store]||{name:store,why:''};
-    html+=`<div class="opt ${store===cur?'current':''}" role="button" tabindex="0" data-store="${store}" aria-label="Move to ${esc(info.name)}">
+    html+=`<div class="opt ${store===cur?'current':''}" role="button" tabindex="0" data-store="${store}"${store===cur?' aria-current="true"':''} aria-label="Move to ${esc(info.name)}${store===cur?' (current store)':''}">
       <span class="ostack"><span class="oname">${esc(info.name)}</span><span class="owhy">${esc(info.why)}</span></span>
       <span class="otick" aria-hidden="true">${IC.check}</span></div>`;
   });
@@ -730,6 +730,7 @@ function closeSheet(){$('#scrim').classList.remove('show');$('#sheet').classList
 function boot(d){
   DATA=d;
   if(!DATA.meals||!DATA.meals.length){fail('No meals are planned for this week yet.');return;}
+  DATA.items=Array.isArray(DATA.items)?DATA.items:[];
   DATA.storeOrder=DATA.storeOrder||Object.keys(DATA.stores||{});
   load();
   $('#boot').style.display='none';
