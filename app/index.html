@@ -1,286 +1,754 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Weekly Meals</title>
-<!--
-  PROVISIONAL app shell — "provisional pending spec v2".
-  Built from references/meal-plan-app-spec.md (v1 ROUGH). The shell is built ONCE;
-  only app/data/week.json changes weekly. Don't polish this mid-plan — wait for spec v2.
--->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15191c" media="(prefers-color-scheme: dark)">
+<title>This Week — dinners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #14171c;
-    --panel: #1d222a;
-    --panel-2: #252b35;
-    --text: #e8ecf2;
-    --muted: #9aa6b5;
-    --line: #333b47;
-    --accent: #6fb1ff;
-    --low: #5bd1a0;
-    --med: #f2c14e;
-    --high: #ff8f6b;
+/* ============================================================ Tokens */
+:root{
+  color-scheme: light dark;
+  --bg: oklch(1 0 0);
+  --surface: oklch(0.976 0.004 160);
+  --surface-2: oklch(0.958 0.006 160);
+  --line: oklch(0.916 0.005 160);
+  --line-2: oklch(0.860 0.006 160);
+  --ink: oklch(0.240 0.018 160);
+  --muted: oklch(0.470 0.018 160);
+  --faint: oklch(0.560 0.015 160);
+  --primary: oklch(0.520 0.130 160);
+  --primary-strong: oklch(0.450 0.130 160);
+  --primary-ink: oklch(1 0 0);
+  --primary-wash: oklch(0.955 0.030 160);
+  --primary-line: oklch(0.520 0.130 160 / 0.30);
+  --accent: oklch(0.500 0.150 65);
+  --accent-ink: oklch(1 0 0);
+  --accent-wash: oklch(0.950 0.040 65);
+  --accent-line: oklch(0.500 0.150 65 / 0.34);
+  --warn: oklch(0.520 0.200 25);
+  --warn-bg: oklch(0.960 0.035 25);
+  --warn-line: oklch(0.520 0.200 25 / 0.35);
+  --shadow: 0 1px 2px oklch(0.2 0.02 160 / 0.04), 0 8px 28px oklch(0.2 0.02 160 / 0.06);
+  --ease: cubic-bezier(0.22,1,0.36,1);
+  --maxw: 560px;
+  --tabh: 60px;
+  --z-sticky: 100; --z-tabbar: 200; --z-scrim: 300; --z-sheet: 310; --z-cook: 400;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: oklch(0.165 0.008 160);
+    --surface: oklch(0.205 0.010 160);
+    --surface-2: oklch(0.235 0.012 160);
+    --line: oklch(0.295 0.012 160);
+    --line-2: oklch(0.370 0.014 160);
+    --ink: oklch(0.945 0.008 160);
+    --muted: oklch(0.720 0.014 160);
+    --faint: oklch(0.580 0.012 160);
+    --primary: oklch(0.760 0.140 160);
+    --primary-strong: oklch(0.800 0.140 160);
+    --primary-ink: oklch(0.180 0.020 160);
+    --primary-wash: oklch(0.270 0.040 160);
+    --primary-line: oklch(0.760 0.140 160 / 0.30);
+    --accent: oklch(0.780 0.120 65);
+    --accent-ink: oklch(0.180 0.020 65);
+    --accent-wash: oklch(0.300 0.040 65);
+    --accent-line: oklch(0.780 0.120 65 / 0.32);
+    --warn: oklch(0.700 0.160 25);
+    --warn-bg: oklch(0.300 0.050 25);
+    --warn-line: oklch(0.700 0.160 25 / 0.40);
+    --shadow: 0 1px 2px oklch(0 0 0 / 0.3), 0 10px 34px oklch(0 0 0 / 0.45);
   }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.45;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  }
-  header { padding: 18px 16px 8px; }
-  h1 { font-size: 1.4rem; margin: 0; }
-  .week { color: var(--muted); font-size: 0.95rem; margin-top: 2px; }
-  .provisional {
-    margin: 10px 16px; padding: 8px 12px; border: 1px dashed var(--line);
-    border-radius: 8px; color: var(--muted); font-size: 0.85rem;
-  }
-  nav { display: flex; gap: 6px; padding: 6px 12px; position: sticky; top: 0; background: var(--bg); z-index: 5; }
-  nav button {
-    flex: 1; padding: 10px; border: 1px solid var(--line); background: var(--panel);
-    color: var(--text); border-radius: 8px; font-size: 0.95rem;
-  }
-  nav button.active { border-color: var(--accent); color: var(--accent); }
-  main { padding: 8px 12px 60px; }
-  section.view { display: none; }
-  section.view.active { display: block; }
+}
+/* ============================================================ Base */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink)}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  min-height:100vh;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input{font:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+.serif{font-family:"Newsreader",Georgia,"Times New Roman",serif}
+.tnum{font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
-  .meal { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
-  .meal h2 { margin: 0 0 4px; font-size: 1.15rem; }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-  .tag { font-size: 0.78rem; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); color: var(--muted); }
-  .tag.effort-Low { color: var(--low); }
-  .tag.effort-Med { color: var(--med); }
-  .tag.effort-High { color: var(--high); }
+.app{max-width:var(--maxw);margin:0 auto;position:relative}
 
-  .sched { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 0.9rem; color: var(--muted); }
-  .sched input[type=time] { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+/* ============================================================ Screens */
+.screen{display:none;padding:0 20px;padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 28px)}
+.screen.active{display:block;animation:screen-in .26s var(--ease)}
+@keyframes screen-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-  ul.steps { list-style: none; padding: 0; margin: 8px 0 0; }
-  ul.steps li { border-top: 1px solid var(--line); padding: 10px 0; display: flex; gap: 10px; align-items: flex-start; }
-  .step-start { width: 64px; flex-shrink: 0; color: var(--accent); font-variant-numeric: tabular-nums; font-size: 0.9rem; }
-  .step-body { flex: 1; }
-  .step-meta { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
-  .handoff { color: var(--high); }
-  .timer-btn { margin-top: 6px; padding: 5px 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); border-radius: 6px; font-size: 0.82rem; }
-  .timer-btn.running { border-color: var(--accent); color: var(--accent); }
+/* ============================================================ Masthead */
+.masthead{padding:34px 0 16px}
+.kicker{font-size:0.8125rem;font-weight:600;letter-spacing:0.01em;color:var(--primary-strong)}
+.mast-h1{font-weight:500;font-size:clamp(2.75rem,11vw,3.25rem);line-height:0.98;letter-spacing:-0.02em;margin:6px 0 10px;text-wrap:balance}
+.subtitle{font-style:italic;font-size:1.1875rem;line-height:1.35;color:var(--muted);max-width:42ch;text-wrap:pretty}
 
-  details.ingredients { margin-top: 8px; }
-  details.ingredients summary { color: var(--muted); font-size: 0.88rem; cursor: pointer; }
-  details.ingredients ul { margin: 6px 0 0; padding-left: 18px; color: var(--text); font-size: 0.9rem; }
+/* allergy strip / banner */
+.allergy{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:12px;color:var(--warn)}
+.allergy.strip{margin-top:20px}
+.allergy svg{flex:none;width:18px;height:18px;margin-top:1px}
+.allergy b{font-weight:700}
+.allergy p{font-size:0.875rem;line-height:1.45;font-weight:500}
+.allergy p + p{margin-top:6px}
 
-  .store-group { margin-bottom: 14px; }
-  .store-group h3 { font-size: 1rem; margin: 0 0 6px; color: var(--accent); }
-  .item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
-  .item.onhand .item-name { color: var(--muted); text-decoration: line-through; }
-  .item input[type=checkbox] { width: 20px; height: 20px; flex-shrink: 0; }
-  .item-name { flex: 1; }
-  .item-qty { color: var(--muted); font-size: 0.85rem; }
-  .item-section { color: var(--muted); font-size: 0.75rem; }
-  .item select { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 3px 4px; font-size: 0.78rem; }
-  .err { padding: 16px; color: var(--high); }
+/* flow hint / section rule */
+.rulelabel{display:flex;align-items:center;gap:10px;color:var(--faint);font-size:0.8125rem;font-weight:600;margin:26px 0 2px}
+.rulelabel::after{content:"";flex:1;height:1px;background:var(--line)}
+.rulelabel.lead::before{content:"";flex:none}
+
+/* ============================================================ Night list */
+.night{display:grid;grid-template-columns:3.25rem 1fr 22px;align-items:start;gap:6px 14px;width:100%;text-align:left;cursor:pointer;
+  padding:22px 0;border-top:1px solid var(--line);position:relative;transition:background .18s var(--ease)}
+.night:first-of-type{border-top:none}
+.night:active{background:var(--surface)}
+.night .idx{grid-row:1 / span 6;font-size:2.5rem;line-height:1;font-weight:400;color:var(--line-2);font-variant-numeric:tabular-nums;padding-top:2px}
+.night .cuisine{font-size:0.75rem;font-weight:600;letter-spacing:0.02em;color:var(--faint)}
+.night .name{font-weight:500;font-size:1.5rem;line-height:1.1;color:var(--ink);letter-spacing:-0.01em;margin-top:2px;text-wrap:balance}
+.night .blurb{font-style:italic;font-size:1rem;color:var(--muted);line-height:1.35;margin-top:5px;text-wrap:pretty}
+.night .meta{font-size:0.8125rem;color:var(--faint);font-weight:500;margin-top:9px}
+.night .meta .dot{opacity:.5;margin:0 7px}
+.night .chev{grid-row:1 / span 6;align-self:center;color:var(--line-2);width:20px;height:20px}
+
+/* staggered entrance, first paint only */
+.stagger .night{opacity:0;animation:rise .5s var(--ease) forwards}
+.stagger .night:nth-of-type(1){animation-delay:.04s}
+.stagger .night:nth-of-type(2){animation-delay:.12s}
+.stagger .night:nth-of-type(3){animation-delay:.2s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ============================================================ Pill tags */
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:600;padding:4px 9px 4px 8px;border-radius:999px;border:1px solid var(--line-2);color:var(--muted);line-height:1}
+.tag svg{width:13px;height:13px;flex:none}
+.tag.save{background:var(--primary-wash);border-color:var(--primary-line);color:var(--primary-strong)}
+.tag.new{background:var(--accent-wash);border-color:var(--accent-line);color:var(--accent)}
+.tag.kid{color:var(--primary-strong);border-color:var(--primary-line)}
+
+/* ============================================================ Recipe */
+.topbar{position:sticky;top:0;z-index:var(--z-sticky);background:color-mix(in oklch,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);
+  display:flex;align-items:center;gap:6px;margin:0 -20px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.topbar button{display:inline-flex;align-items:center;gap:4px;font-size:0.9375rem;font-weight:600;color:var(--primary-strong);padding:8px 8px 8px 6px;border-radius:10px;min-height:44px}
+.topbar button svg{width:20px;height:20px}
+.topbar .crumb{font-size:0.875rem;color:var(--faint);font-weight:600;margin-left:auto;padding-right:6px}
+
+.rhead{padding:24px 0 6px}
+.rhead .cuisine{font-size:0.8125rem;font-weight:600;color:var(--faint)}
+.rhead .name{font-weight:500;font-size:2.25rem;line-height:1.04;letter-spacing:-0.02em;margin:6px 0 10px;text-wrap:balance}
+.rhead .blurb{font-style:italic;font-size:1.1875rem;line-height:1.35;color:var(--muted);text-wrap:pretty}
+
+/* stats strip */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);margin-top:22px}
+.stats .cell{padding:14px 4px;text-align:center}
+.stats .cell + .cell{border-left:1px solid var(--line)}
+.stats .v{font-size:1.5rem;font-weight:500;color:var(--ink);line-height:1}
+.stats .k{font-size:0.75rem;font-weight:600;color:var(--faint);margin-top:6px}
+
+/* scheduler */
+.sched{margin-top:22px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface)}
+.sched-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;gap:12px}
+.sched-row label{font-size:0.9375rem;font-weight:600;color:var(--muted)}
+.sched-row input[type=time]{font-family:"Figtree",sans-serif;font-size:1rem;font-weight:600;color:var(--ink);background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:9px 12px;font-variant-numeric:tabular-nums;min-height:44px}
+.sched-begin{background:var(--primary-wash);padding:13px 16px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-top:1px solid var(--primary-line)}
+.sched-begin .lab{font-size:0.875rem;font-weight:600;color:var(--primary-strong)}
+.sched-begin .t{font-size:1.75rem;font-weight:500;color:var(--primary-strong);font-variant-numeric:tabular-nums;letter-spacing:-0.01em}
+
+/* carryover */
+.carry{display:flex;gap:11px;align-items:flex-start;margin-top:14px;padding:13px 15px;border:1px solid var(--line-2);border-radius:14px}
+.carry.save{background:var(--primary-wash);border-color:var(--primary-line)}
+.carry > svg{flex:none;width:18px;height:18px;margin-top:2px;color:var(--muted)}
+.carry.save > svg{color:var(--primary-strong)}
+.carry .ch{font-size:0.75rem;font-weight:700;letter-spacing:0.02em;color:var(--faint)}
+.carry.save .ch{color:var(--primary-strong)}
+.carry .ci{font-size:0.9375rem;color:var(--ink);font-weight:500;line-height:1.4;margin-top:3px}
+.carry .cn{font-size:0.8125rem;color:var(--muted)}
+
+/* step rows */
+.step{display:grid;grid-template-columns:3.25rem 1fr;gap:4px 14px;padding:18px 0;border-top:1px solid var(--line)}
+.step .rail{text-align:right;padding-top:2px}
+.step .rail .clk{font-size:0.8125rem;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.3}
+.step .rail .pix{display:block;font-size:0.6875rem;color:var(--primary-strong);font-weight:700;margin-top:3px}
+.step h3{font-size:1.0625rem;font-weight:600;color:var(--ink);line-height:1.25}
+.bullets{margin-top:7px;list-style:none}
+.bullets li{font-size:0.9375rem;color:var(--muted);line-height:1.5;padding-left:16px;position:relative}
+.bullets li::before{content:"";position:absolute;left:2px;top:0.62em;width:5px;height:5px;border-radius:50%;background:var(--line-2)}
+
+/* leftovers note */
+.note-block{display:flex;gap:11px;align-items:flex-start;margin-top:26px;padding:15px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.note-block > svg{flex:none;width:18px;height:18px;margin-top:2px;color:var(--faint)}
+.note-block .nh{font-size:0.9375rem;font-weight:600;color:var(--ink)}
+.note-block ul{margin-top:6px;list-style:none}
+.note-block li{font-size:0.875rem;color:var(--muted);line-height:1.5;padding-left:15px;position:relative}
+.note-block li::before{content:"";position:absolute;left:2px;top:0.6em;width:4px;height:4px;border-radius:50%;background:var(--line-2)}
+
+/* start cook CTA */
+.cta{position:fixed;left:0;right:0;bottom:calc(var(--tabh) + env(safe-area-inset-bottom));z-index:var(--z-sticky);
+  display:none;justify-content:center;padding:10px 20px 14px;background:linear-gradient(to top,var(--bg) 62%,transparent)}
+.cta.show{display:flex}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:var(--maxw);
+  background:var(--primary);color:var(--primary-ink);font-weight:700;font-size:1.0625rem;padding:15px;border-radius:14px;min-height:54px;box-shadow:var(--shadow);transition:transform .12s var(--ease),filter .15s var(--ease)}
+.btn:active{transform:translateY(1px);filter:brightness(.97)}
+.btn svg{width:20px;height:20px}
+.btn.ghost{background:var(--surface-2);color:var(--ink);box-shadow:none;border:1px solid var(--line-2)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+/* ============================================================ Tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:var(--z-tabbar);background:color-mix(in oklch,var(--surface) 92%,transparent);backdrop-filter:saturate(1.4) blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+.tabbar .inner{max-width:var(--maxw);width:100%;display:flex}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 11px;color:var(--faint);font-size:0.6875rem;font-weight:600;min-height:var(--tabh)}
+.tab.active{color:var(--primary)}
+.tab svg{width:23px;height:23px}
+.hidebar .tabbar,.hidebar .cta{display:none}
+
+/* ============================================================ Shopping */
+.shop-summary{position:sticky;top:0;z-index:var(--z-sticky);margin:0 -20px;padding:18px 20px 14px;background:color-mix(in oklch,var(--bg) 90%,transparent);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.shop-summary .top{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+.shop-summary .total{font-size:2.5rem;font-weight:500;line-height:0.95;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.shop-summary .tlabel{font-size:0.8125rem;font-weight:600;color:var(--faint);margin-bottom:3px}
+.shop-summary .left{font-size:0.875rem;font-weight:600;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.shop-summary .reset{font-size:0.75rem;font-weight:600;color:var(--faint);margin-top:3px;padding:2px 0}
+.staple-toggle{display:flex;align-items:center;gap:11px;width:100%;margin-top:14px;padding:12px 14px;border:1px solid var(--line-2);border-radius:13px;background:var(--surface);text-align:left;transition:background .15s var(--ease)}
+.staple-toggle.on{background:var(--primary-wash);border-color:var(--primary-line)}
+.staple-toggle .sw{flex:none;width:42px;height:25px;border-radius:999px;background:var(--line-2);position:relative;transition:background .2s var(--ease)}
+.staple-toggle .sw::after{content:"";position:absolute;top:2.5px;left:2.5px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px oklch(0 0 0 /.25);transition:transform .2s var(--ease)}
+.staple-toggle.on .sw{background:var(--primary)}
+.staple-toggle.on .sw::after{transform:translateX(17px)}
+.staple-toggle .lbl{font-size:0.9375rem;font-weight:600;color:var(--ink)}
+.staple-toggle .sub{font-size:0.8125rem;color:var(--muted);font-weight:500}
+
+.store{margin-top:30px}
+.store-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line-2)}
+.store-head .sname{font-size:1.375rem;font-weight:500;letter-spacing:-0.01em}
+.store-head .swhy{font-size:0.8125rem;color:var(--faint);font-weight:500}
+.store-head .ssub{font-size:1rem;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.subsec{font-size:0.75rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--faint);margin:18px 0 2px}
+
+.item{display:grid;grid-template-columns:26px 1fr auto;gap:13px;align-items:start;padding:14px 0;border-top:1px solid var(--line)}
+.item .check{grid-row:1 / span 3;align-self:start;position:relative;width:26px;height:26px;border-radius:50%;border:2px solid var(--line-2);margin-top:1px;display:flex;align-items:center;justify-content:center;transition:background .15s var(--ease),border-color .15s var(--ease)}
+.item .check::after{content:"";position:absolute;inset:-9px}/* 44px touch target */
+.item .check svg{width:15px;height:15px;color:var(--primary-ink);opacity:0;transition:opacity .12s}
+.item.checked .check{background:var(--primary);border-color:var(--primary)}
+.item.checked .check svg{opacity:1}
+.item .nm{font-size:1rem;font-weight:600;color:var(--ink)}
+.item .qty{font-size:0.8125rem;color:var(--faint);font-weight:500;margin-left:8px}
+.item .pr{font-size:1.125rem;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+.item .note{font-size:0.8125rem;color:var(--muted);line-height:1.4;margin-top:4px}
+.item .note.warn{color:var(--warn);font-weight:600}
+.item .row2{display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap}
+.item .move{display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:600;color:var(--faint);border:1px solid var(--line-2);border-radius:999px;padding:4px 9px;min-height:30px}
+.item .move svg{width:13px;height:13px}
+.item .have{display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:600;color:var(--muted);border:1px solid var(--line-2);border-radius:999px;padding:4px 10px;min-height:30px}
+.item .have svg{width:13px;height:13px}
+.item.have-it{opacity:.55}
+.item.have-it .have{background:var(--primary-wash);border-color:var(--primary-line);color:var(--primary-strong)}
+.item.checked .nm,.item.checked .qty{text-decoration:line-through;color:var(--faint)}
+.item.checked .pr{color:var(--faint)}
+
+/* ============================================================ Cook mode */
+.cook{position:fixed;inset:0;z-index:var(--z-cook);background:var(--bg);display:none;flex-direction:column}
+.cook.open{display:flex;animation:screen-in .26s var(--ease)}
+.cook-top{display:flex;align-items:center;gap:12px;padding:14px 18px 10px;max-width:var(--maxw);width:100%;margin:0 auto}
+.cook-top .phase{font-size:0.8125rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+.cook-top .phase.prep{color:var(--accent)}
+.cook-top .phase.cook{color:var(--primary-strong)}
+.cook-top .count{font-size:0.875rem;font-weight:600;color:var(--faint);font-variant-numeric:tabular-nums}
+.cook-top .x{margin-left:auto;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--muted);border-radius:12px}
+.cook-top .x svg{width:22px;height:22px}
+.progress{height:4px;background:var(--line);max-width:var(--maxw);width:calc(100% - 36px);margin:0 auto;border-radius:99px;overflow:hidden}
+.progress .bar{height:100%;background:var(--primary);border-radius:99px;transition:width .35s var(--ease)}
+.cook-body{flex:1;overflow-y:auto;max-width:var(--maxw);width:100%;margin:0 auto;padding:24px 20px 30px}
+.cook-sched{font-size:0.875rem;font-weight:600;color:var(--faint);font-variant-numeric:tabular-nums}
+.cook-title{font-size:2.25rem;font-weight:500;line-height:1.06;letter-spacing:-0.02em;margin:8px 0 6px;text-wrap:balance}
+.cook-body .bullets li{font-size:1.0625rem;color:var(--ink);padding-left:20px;margin-top:10px}
+.cook-body .bullets li::before{background:var(--primary);top:0.66em}
+.cook-nav{display:flex;gap:12px;padding:12px 20px;padding-bottom:calc(12px + env(safe-area-inset-bottom));max-width:var(--maxw);width:100%;margin:0 auto;border-top:1px solid var(--line)}
+.cook-nav .btn{flex:1}
+.cook-nav .btn.ghost{flex:0 0 38%}
+
+/* timer panel */
+.timer{margin-top:24px;border:1px solid var(--line-2);border-radius:18px;background:var(--surface);padding:20px;text-align:center}
+.timer.done{background:var(--primary-wash);border-color:var(--primary-line)}
+.timer .tlab{font-size:0.8125rem;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;color:var(--faint)}
+.timer.done .tlab{color:var(--primary-strong)}
+.timer .tclock{font-size:4rem;font-weight:500;line-height:1;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;margin:10px 0 16px}
+.timer.done .tclock{color:var(--primary-strong)}
+.timer .tbtns{display:flex;gap:10px;justify-content:center}
+.timer .tbtn{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:0.9375rem;padding:11px 20px;border-radius:12px;min-height:46px;border:1px solid var(--line-2);background:var(--surface-2)}
+.timer .tbtn.primary{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.timer .tbtn svg{width:17px;height:17px}
+
+/* ============================================================ Sheet */
+.scrim{position:fixed;inset:0;z-index:var(--z-scrim);background:oklch(0 0 0 /.42);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:var(--z-sheet);max-width:var(--maxw);margin:0 auto;background:var(--surface);
+  border-radius:22px 22px 0 0;box-shadow:var(--shadow);padding:8px 0 calc(18px + env(safe-area-inset-bottom));
+  transform:translateY(105%);transition:transform .3s var(--ease)}
+.sheet.show{transform:none}
+.sheet .grip{width:38px;height:4px;border-radius:99px;background:var(--line-2);margin:8px auto 6px}
+.sheet h2{font-size:1.25rem;font-weight:500;padding:8px 22px 4px}
+.sheet .ssub{font-size:0.875rem;color:var(--muted);padding:0 22px 10px}
+.sheet .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:15px 22px;border-top:1px solid var(--line);min-height:58px;cursor:pointer}
+.sheet .opt .ostack{display:flex;flex-direction:column;gap:2px}
+.sheet .opt .oname{font-size:1.0625rem;font-weight:600;color:var(--ink)}
+.sheet .opt .owhy{font-size:0.8125rem;color:var(--faint);font-weight:500}
+.sheet .opt .otick{margin-left:auto;width:22px;height:22px;color:var(--primary);opacity:0}
+.sheet .opt.current .otick{opacity:1}
+.sheet .opt.current .oname{color:var(--primary-strong)}
+
+/* ============================================================ Loading / error */
+.boot{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:40px;text-align:center;gap:14px}
+.boot .spin{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--primary);animation:spin 1s linear infinite}
+.boot p{color:var(--muted);font-size:0.9375rem;max-width:34ch;line-height:1.5}
+.boot h2{font-size:1.375rem;font-weight:500}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
 </style>
 </head>
 <body>
-<header>
-  <h1>Weekly Meals</h1>
-  <div class="week" id="weekOf"></div>
-</header>
-<div class="provisional" id="provisional" hidden>Provisional app — pending spec v2.</div>
-<nav>
-  <button data-view="meals" class="active">Meals</button>
-  <button data-view="shopping">Shopping</button>
-</nav>
-<main>
-  <section class="view active" id="view-meals"></section>
-  <section class="view" id="view-shopping"></section>
-</main>
+<div class="app" id="app">
+  <div class="boot" id="boot"><div class="spin"></div><p>Loading this week’s plan…</p></div>
+
+  <section class="screen" id="screen-week" aria-label="This week"></section>
+  <section class="screen" id="screen-recipe" aria-label="Recipe"></section>
+  <section class="screen" id="screen-shopping" aria-label="Shopping"></section>
+
+  <div class="cta" id="recipe-cta"></div>
+
+  <nav class="tabbar" id="tabbar" hidden>
+    <div class="inner">
+      <button class="tab" data-tab="week" aria-label="This Week">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+        This Week
+      </button>
+      <button class="tab" data-tab="shopping" aria-label="Shopping">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14l-1 13H6L5 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+        Shopping
+      </button>
+    </div>
+  </nav>
+</div>
+
+<div class="cook" id="cook" aria-modal="true" role="dialog" aria-label="Cook along"></div>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Move item to another store"></div>
 
 <script>
-const STORES = ["Costco", "Cub", "Target", "Other"];
-let DATA = null;
-let audioCtx = null;
+"use strict";
+/* ===================================================== Icons (1.6 stroke) */
+const I = (p,o=18)=>`<svg viewBox="0 0 24 24" width="${o}" height="${o}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const IC = {
+  alert: I('<path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v5"/><path d="M12 18h.01"/>'),
+  back:  I('<path d="m15 6-6 6 6 6"/>'),
+  chev:  I('<path d="m9 6 6 6-6 6"/>'),
+  check: I('<path d="m5 12 5 5L20 7"/>'),
+  clock: I('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+  timer: I('<path d="M10 2h4"/><path d="M12 14V9"/><circle cx="12" cy="14" r="8"/>'),
+  arrowR:I('<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>'),
+  arrowL:I('<path d="M19 12H5"/><path d="m11 18-6-6 6-6"/>'),
+  kid:   I('<circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>'),
+  spark: I('<path d="m12 3 2.09 4.26L18.5 8l-3.5 3.05.83 4.7L12 13.5 8.17 15.75l.83-4.7L5.5 8l4.41-.74L12 3Z"/>'),
+  play:  I('<path d="M7 4.5v15l12-7.5-12-7.5Z"/>'),
+  pause: I('<path d="M8 4.5v15M16 4.5v15"/>'),
+  reset: I('<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4.5V9h4.5"/>'),
+  move:  I('<path d="M8 7 4 11l4 4"/><path d="M4 11h11"/><path d="m16 17 4-4-4-4"/><path d="M20 13H9"/>'),
+  x:     I('<path d="M6 6 18 18M18 6 6 18"/>'),
+  leaf:  I('<path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 16-9 0 12-4 16-9 16Z"/><path d="M11 13c0-3 3-6 6-7"/>'),
+  box:   I('<path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/>'),
+};
 
-// Unlock/resume audio during a direct user gesture — mobile browsers block
-// AudioContext started later from setInterval (autoplay policy), which would
-// otherwise silence the timer beep.
-function initAudio(){
-  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-  if (audioCtx.state === "suspended") audioCtx.resume();
-}
+/* ===================================================== State + helpers */
+let DATA=null, STATE=null;
+const EFFORT = {High:'Big cook', Med:'Steady', Low:'Easy night'};
+const SEC_ORDER=['meat','produce','dairy','frozen','pantry'];
+const SEC_NAME={meat:'Meat',produce:'Produce',dairy:'Dairy',frozen:'Frozen',pantry:'Pantry'};
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const money=n=>'$'+n.toFixed(2);
+function fmtClock(min){let m=((Math.round(min)%1440)+1440)%1440;let h=Math.floor(m/60),mm=m%60;const ap=h<12?'AM':'PM';let h12=h%12;if(h12===0)h12=12;return `${h12}:${pad(mm)} ${ap}`;}
+function fmtDur(min){min=Math.round(min);const h=Math.floor(min/60),m=min%60;if(h&&m)return `${h}h ${m}m`;if(h)return `${h}h`;return `${m}m`;}
+function parseHM(s){const m=/^(\d{1,2}):(\d{2})$/.exec(s||'');if(!m)return null;return (+m[1])*60+(+m[2]);}
 
-function pad(n){ return String(n).padStart(2,"0"); }
-function parseTime(s){
-  const parts = String(s||"").split(":").map(Number);
-  const mins = parts[0]*60 + parts[1];
-  return Number.isFinite(mins) ? mins : 18*60; // fall back to 18:00 on malformed input
-}
-function fmtTime(mins){ mins=((mins%1440)+1440)%1440; return pad(Math.floor(mins/60))+":"+pad(mins%60); }
-
-// Scheduler: back-calculate each step's start from serveTime minus the sum of remaining step minutes.
-function startTimes(meal){
-  const serve = parseTime(meal.serveTime);
-  const steps = Array.isArray(meal.steps) ? meal.steps : [];
-  const total = steps.reduce((a,s)=>a+(s.min||0),0);
-  let elapsed = 0;
-  return steps.map(s => { const start = serve - total + elapsed; elapsed += (s.min||0); return start; });
-}
-
-function renderMeals(){
-  const el = document.getElementById("view-meals");
-  el.innerHTML = "";
-  DATA.meals.forEach(meal => {
-    const starts = startTimes(meal);
-    const div = document.createElement("div");
-    div.className = "meal";
-    div.innerHTML = `
-      <h2>${meal.name}</h2>
-      <div class="tags">
-        <span class="tag effort-${meal.effort}">${meal.effort} effort</span>
-        <span class="tag">${meal.protein}</span>
-        <span class="tag">${meal.method}</span>
-        <span class="tag">${meal.flavor}</span>
-        <span class="tag">${meal.servings} servings</span>
-      </div>
-      <div class="sched">
-        Serve at <input type="time" value="${meal.serveTime}" data-meal="${meal.id}"> &middot; start by <strong class="start0">${fmtTime(starts[0])}</strong>
-      </div>
-    `;
-    const ul = document.createElement("ul");
-    ul.className = "steps";
-    (meal.steps || []).forEach((s,i) => {
-      const li = document.createElement("li");
-      const meta = `${s.min} min${s.active ? " · active" : " · unattended"}${s.handoff ? ' · <span class="handoff">hand-off</span>' : ""}`;
-      li.innerHTML = `
-        <div class="step-start" data-step="${i}">${fmtTime(starts[i])}</div>
-        <div class="step-body">
-          <div>${s.label}</div>
-          <div class="step-meta">${meta}</div>
-          <button class="timer-btn" data-min="${s.min}">Start ${s.min}m timer</button>
-        </div>`;
-      ul.appendChild(li);
-    });
-    div.appendChild(ul);
-    if (meal.leftoversNote){
-      const note = document.createElement("div");
-      note.className = "step-meta"; note.style.marginTop = "8px";
-      note.textContent = "Leftovers: " + meal.leftoversNote;
-      div.appendChild(note);
-    }
-    if (meal.ingredients && meal.ingredients.length){
-      const det = document.createElement("details");
-      det.className = "ingredients";
-      det.innerHTML = "<summary>Ingredients</summary><ul>" +
-        meal.ingredients.map(x=>`<li>${x.qty} — ${x.name}</li>`).join("") + "</ul>";
-      div.appendChild(det);
-    }
-    // live re-schedule on serve-time change
-    div.querySelector("input[type=time]").addEventListener("change", e => {
-      meal.serveTime = e.target.value;
-      const st = startTimes(meal);
-      div.querySelector(".start0").textContent = fmtTime(st[0]);
-      div.querySelectorAll(".step-start").forEach((node,idx)=> node.textContent = fmtTime(st[idx]));
-    });
-    el.appendChild(div);
+/* steps with computed clock times for a meal */
+function schedule(meal){
+  const steps=[...meal.prep.map(s=>({...s,phase:'Prep'})),...meal.cook.map(s=>({...s,phase:'Cook'}))];
+  const total=steps.reduce((a,s)=>a+(s.min||0),0);
+  const serve=parseHM(STATE.serve[meal.id]||meal.defaultServe)??parseHM(meal.defaultServe)??1080;
+  const start=serve-total;
+  let acc=0,p=0,c=0;
+  steps.forEach(s=>{
+    s.when=start+acc; acc+=(s.min||0);
+    if(s.phase==='Prep'){p++;s.label='P'+p;} else {c++;s.label=''+c;}
   });
+  return {steps,total,start,serve};
+}
 
-  // timers
-  el.querySelectorAll(".timer-btn").forEach(btn => {
-    btn.addEventListener("click", () => startTimer(btn, parseInt(btn.dataset.min,10)));
+/* ===================================================== Persistence */
+function storeKey(){return 'mep:'+(DATA.weekOf||'wk');}
+function load(){
+  STATE={serve:{},items:{},pantryOn:false};
+  DATA.meals.forEach(m=>STATE.serve[m.id]=m.defaultServe);
+  DATA.items.forEach(it=>STATE.items[it.id]={have:false,checked:false,store:it.store});
+  try{
+    const raw=localStorage.getItem(storeKey());
+    if(raw){const s=JSON.parse(raw);
+      if(s.serve)Object.assign(STATE.serve,s.serve);
+      if(s.pantryOn!=null)STATE.pantryOn=s.pantryOn;
+      if(s.items)for(const id in s.items){if(STATE.items[id])Object.assign(STATE.items[id],s.items[id]);}
+    }
+  }catch(e){}
+}
+function save(){try{localStorage.setItem(storeKey(),JSON.stringify(STATE));}catch(e){}}
+
+/* ===================================================== Navigation */
+let curMeal=0, lastTab='week';
+function show(screen){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $('#screen-'+screen).classList.add('active');
+  const isTab = screen==='week'||screen==='shopping';
+  if(isTab) lastTab=screen;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===(screen==='recipe'?'week':screen)));
+  $('#recipe-cta').classList.toggle('show', screen==='recipe');
+  window.scrollTo(0,0);
+}
+
+/* ===================================================== Render: This Week */
+function renderWeek(){
+  const d=DATA;
+  let html=`<header class="masthead">
+    <div class="kicker">${esc(d.weekLabel||'')}</div>
+    <h1 class="serif mast-h1">This Week</h1>
+    <p class="serif subtitle">${esc(d.subtitle||'')}</p>
+    <div class="allergy strip" role="note">${IC.alert}
+      <p><b>Apple allergy.</b> Nothing this week contains apple, apple juice, or cider vinegar. Check the BBQ sauce label.</p></div>
+  </header>
+  <div class="rulelabel">Cook in order</div>
+  <div class="nights stagger">`;
+  d.meals.forEach((m,i)=>{
+    const {total}=schedule(m);
+    const tagNew = /try something new/i.test(m.cuisine);
+    let tags='';
+    if(tagNew) tags+=`<span class="tag new">${IC.spark}Try something new</span>`;
+    (m.saves||[]).forEach(s=>{tags+=`<span class="tag save">${IC.arrowR}Saves for ${esc(short(s.to))}</span>`;});
+    (m.uses||[]).forEach(u=>{tags+=`<span class="tag">${IC.arrowL}Uses ${esc(short(u.from))}</span>`;});
+    html+=`<div class="night" role="button" tabindex="0" data-meal="${i}" aria-label="Night ${i+1}: ${esc(m.name)}">
+      <div class="idx serif" aria-hidden="true">${i+1}</div>
+      <div class="cuisine">${esc(m.cuisine)}</div>
+      <div class="name serif">${esc(m.name)}</div>
+      <p class="blurb serif">${esc(m.blurb)}</p>
+      <div class="meta tnum">${esc(EFFORT[m.effort]||'')}<span class="dot">·</span>${m.activeMin} min hands-on<span class="dot">·</span>${fmtDur(total)} total</div>
+      <div class="tags">${tags}</div>
+      <span class="chev" aria-hidden="true">${IC.chev}</span>
+    </div>`;
+  });
+  html+=`</div>`;
+  $('#screen-week').innerHTML=html;
+  $('#screen-week').querySelectorAll('.night').forEach(b=>{
+    const go=()=>openRecipe(+b.dataset.meal);
+    b.addEventListener('click',go);
+    b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
   });
 }
+// shorten a "Night 2 — Pesto Chicken Pasta" handoff label to its essence
+function short(s){
+  s=String(s);
+  const night=(s.match(/Night\s*\d/i)||[])[0];
+  if(night) return night.replace(/\s+/,' ');
+  return s.length>22?s.slice(0,21)+'…':s;
+}
 
-function startTimer(btn, mins){
-  if (btn.dataset.running) return;
-  try { initAudio(); } catch(e){}
-  let remaining = mins*60;
-  const label = btn.textContent;
-  btn.dataset.running = "1";
-  btn.classList.add("running");
-  const tick = () => {
-    if (remaining <= 0){
-      clearInterval(iv);
-      delete btn.dataset.running;
-      btn.classList.remove("running");
-      btn.textContent = "Done";
-      ding();
-      return;
+/* ===================================================== Render: Recipe */
+function openRecipe(i){curMeal=i;renderRecipe();show('recipe');}
+function renderRecipe(){
+  const m=DATA.meals[curMeal];
+  const sc=schedule(m);
+  let html=`<div class="topbar">
+    <button id="back">${IC.back}This Week</button>
+    <span class="crumb">Night ${curMeal+1}</span></div>
+  <div class="rhead">
+    <div class="cuisine">${esc(m.cuisine)}</div>
+    <h1 class="name serif">${esc(m.name)}</h1>
+    <p class="blurb serif">${esc(m.blurb)}</p>
+  </div>
+  <div class="stats">
+    <div class="cell"><div class="v serif tnum">${m.activeMin}</div><div class="k">Min hands-on</div></div>
+    <div class="cell"><div class="v serif tnum">${fmtDur(sc.total)}</div><div class="k">Total time</div></div>
+    <div class="cell"><div class="v serif">${esc(m.servesNote)}</div><div class="k">Serves</div></div>
+  </div>
+  <div class="sched">
+    <div class="sched-row"><label for="serve">Serve dinner at</label>
+      <input id="serve" type="time" value="${esc(STATE.serve[m.id]||m.defaultServe)}"></div>
+    <div class="sched-begin"><span class="lab">Begin your first step at</span>
+      <span class="t serif tnum" id="beginat">${fmtClock(sc.start)}</span></div>
+  </div>`;
+
+  if(m.uses&&m.uses.length){
+    html+=`<div class="carry">${IC.arrowL}<div><div class="ch">USES FROM EARLIER</div>`+
+      m.uses.map(u=>`<div class="ci">${esc(u.item)} <span class="cn">— ${esc(u.from)}</span></div>`).join('')+`</div></div>`;
+  }
+  if(m.saves&&m.saves.length){
+    html+=`<div class="carry save">${IC.arrowR}<div><div class="ch">SAVE FOR LATER</div>`+
+      m.saves.map(s=>`<div class="ci">${esc(s.item)} <span class="cn">— for ${esc(s.to)}</span></div>`).join('')+`</div></div>`;
+  }
+
+  html+=`<div class="rulelabel">Prep first</div>`;
+  sc.steps.filter(s=>s.phase==='Prep').forEach(s=>html+=stepRow(s));
+  html+=`<div class="rulelabel">Then cook</div>`;
+  sc.steps.filter(s=>s.phase==='Cook').forEach(s=>html+=stepRow(s));
+
+  if(m.leftovers&&m.leftovers.length){
+    html+=`<div class="note-block">${IC.box}<div><div class="nh">Leftovers & next-day lunch</div><ul>`+
+      m.leftovers.map(l=>`<li>${esc(l)}</li>`).join('')+`</ul></div></div>`;
+  }
+  $('#screen-recipe').innerHTML=html;
+  $('#screen-recipe #back').addEventListener('click',()=>show('week'));
+  const inp=$('#screen-recipe #serve');
+  inp.addEventListener('input',()=>{
+    const v=inp.value; if(parseHM(v)===null)return;
+    STATE.serve[m.id]=v; save();
+    const ns=schedule(m);
+    $('#beginat').textContent=fmtClock(ns.start);
+    ns.steps.forEach((s,idx)=>{const el=document.querySelectorAll('#screen-recipe .step .clk')[idx];if(el)el.textContent=fmtClock(s.when);});
+  });
+  $('#recipe-cta').innerHTML=`<button class="btn" id="startcook">${IC.play}Start cook-along</button>`;
+  $('#startcook').onclick=()=>openCook(curMeal);
+}
+function stepRow(s){
+  let tags='';
+  if(s.kid) tags+=`<span class="tag kid">${IC.kid}Kid can help</span>`;
+  if(s.off) tags+=`<span class="tag">${IC.clock}Hands-off</span>`;
+  if(s.timer) tags+=`<span class="tag">${IC.timer}${s.timer} min timer</span>`;
+  return `<div class="step">
+    <div class="rail"><div class="clk tnum">${fmtClock(s.when)}</div><span class="pix">${s.label}</span></div>
+    <div><h3>${esc(s.t)}</h3>
+      <ul class="bullets">${(s.det||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ul>
+      ${tags?`<div class="tags">${tags}</div>`:''}</div></div>`;
+}
+
+/* ===================================================== Cook mode */
+let cook={meal:0,idx:0,steps:[],timer:null};
+function openCook(mi){
+  cook.meal=mi;cook.idx=0;cook.steps=schedule(DATA.meals[mi]).steps;
+  document.body.classList.add('hidebar');
+  $('#cook').classList.add('open');
+  renderCook();
+}
+function closeCook(){
+  stopTimer();
+  $('#cook').classList.remove('open');
+  document.body.classList.remove('hidebar');
+}
+function renderCook(){
+  stopTimer();
+  const s=cook.steps[cook.idx], n=cook.steps.length, last=cook.idx===n-1;
+  const prog=((cook.idx+1)/n)*100;
+  let tags='';
+  if(s.kid) tags+=`<span class="tag kid">${IC.kid}Kid can help</span>`;
+  if(s.off) tags+=`<span class="tag">${IC.clock}Hands-off</span>`;
+  let html=`<div class="cook-top">
+      <span class="phase ${s.phase.toLowerCase()}">${s.phase}</span>
+      <span class="count tnum">${cook.idx+1} / ${n}</span>
+      <button class="x" id="cookclose" aria-label="Close cook-along">${IC.x}</button>
+    </div>
+    <div class="progress"><div class="bar" style="width:${prog}%"></div></div>
+    <div class="cook-body" id="cookbody">
+      <div class="cook-sched tnum">Scheduled for ${fmtClock(s.when)}</div>
+      <h2 class="cook-title serif">${esc(s.t)}</h2>
+      ${tags?`<div class="tags">${tags}</div>`:''}
+      <ul class="bullets">${(s.det||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ul>
+      ${s.timer?timerPanel(s.timer):''}
+    </div>
+    <div class="cook-nav">
+      <button class="btn ghost" id="cookback" ${cook.idx===0?'disabled':''}>${IC.back}Back</button>
+      <button class="btn" id="cooknext">${last?'Finish '+IC.check:'Next step '+IC.arrowR}</button>
+    </div>`;
+  $('#cook').innerHTML=html;
+  $('#cookclose').onclick=closeCook;
+  $('#cookback').onclick=()=>{if(cook.idx>0){cook.idx--;renderCook();}};
+  $('#cooknext').onclick=()=>{if(last){closeCook();}else{cook.idx++;renderCook();}};
+  if(s.timer) wireTimer(s.timer);
+  $('#cookbody').scrollTop=0;
+}
+function timerPanel(min){
+  return `<div class="timer" id="timer">
+    <div class="tlab">Timer</div>
+    <div class="tclock tnum" id="tclock">${pad(min)}:00</div>
+    <div class="tbtns">
+      <button class="tbtn primary" id="tstart">${IC.play}Start</button>
+      <button class="tbtn" id="treset">${IC.reset}Reset</button>
+    </div></div>`;
+}
+
+/* ===================================================== Timer + audio */
+let audioCtx=null;
+function beeps(){
+  try{
+    audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended')audioCtx.resume();
+    const t0=audioCtx.currentTime;
+    for(let i=0;i<3;i++){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type='sine';o.frequency.value=880;o.connect(g);g.connect(audioCtx.destination);
+      const t=t0+i*0.28;
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.25,t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.2);
+      o.start(t);o.stop(t+0.22);
     }
-    btn.textContent = pad(Math.floor(remaining/60))+":"+pad(remaining%60);
-    remaining--;
-  };
-  tick();
-  const iv = setInterval(tick, 1000);
+  }catch(e){}
 }
-
-function ding(){
-  try {
-    if (navigator.vibrate) navigator.vibrate([400,150,400]);
-    const ctx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-    const o = ctx.createOscillator(); const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination); o.type = "square"; o.frequency.value = 880;
-    g.gain.setValueAtTime(0.2, ctx.currentTime);
-    o.start();
-    o.stop(ctx.currentTime + 0.8);
-  } catch(e){}
-}
-
-function renderShopping(){
-  const el = document.getElementById("view-shopping");
-  el.innerHTML = "";
-  const draw = () => {
-    el.innerHTML = "";
-    const byStore = {};
-    DATA.grocery.forEach(it => { (byStore[it.store] = byStore[it.store] || []).push(it); });
-    Object.keys(byStore).sort().forEach(store => {
-      const group = document.createElement("div");
-      group.className = "store-group";
-      group.innerHTML = `<h3>${store}</h3>`;
-      byStore[store].forEach(it => {
-        const row = document.createElement("div");
-        row.className = "item" + (it.onHand ? " onhand" : "");
-        const itemStores = STORES.includes(it.store) ? STORES : [...STORES, it.store];
-        const opts = itemStores.map(s=>`<option ${s===it.store?"selected":""}>${s}</option>`).join("");
-        row.innerHTML = `
-          <input type="checkbox" ${it.onHand?"checked":""}>
-          <span class="item-name">${it.name}</span>
-          <span class="item-qty">${it.qty}</span>
-          <span class="item-section">${it.section}</span>
-          <select>${opts}</select>`;
-        row.querySelector("input").addEventListener("change", e => { it.onHand = e.target.checked; row.classList.toggle("onhand", it.onHand); });
-        row.querySelector("select").addEventListener("change", e => { it.store = e.target.value; draw(); });
-        group.appendChild(row);
-      });
-      el.appendChild(group);
-    });
+function stopTimer(){if(cook.timer){clearInterval(cook.timer);cook.timer=null;}}
+function wireTimer(min){
+  const base=min*60; let remaining=base, running=false;
+  const clock=$('#tclock'), startBtn=$('#tstart'), resetBtn=$('#treset'), panel=$('#timer');
+  const draw=()=>{clock.textContent=pad(Math.floor(remaining/60))+':'+pad(remaining%60);};
+  const tick=()=>{remaining--;if(remaining<=0){remaining=0;draw();finish();return;}draw();};
+  const finish=()=>{stopTimer();running=false;panel.classList.add('done');
+    $('#tstart').innerHTML=IC.check+'Done';$('#tstart').disabled=true;
+    beeps(); if(navigator.vibrate)navigator.vibrate([220,120,220,120,220]);};
+  startBtn.onclick=()=>{
+    if(!audioCtx){try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+    if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+    if(running){stopTimer();running=false;startBtn.innerHTML=IC.play+'Resume';}
+    else{running=true;startBtn.innerHTML=IC.pause+'Pause';cook.timer=setInterval(tick,1000);}
   };
+  resetBtn.onclick=()=>{stopTimer();running=false;remaining=base;panel.classList.remove('done');
+    startBtn.disabled=false;startBtn.innerHTML=IC.play+'Start';draw();};
   draw();
 }
 
-function switchView(name){
-  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active", b.dataset.view===name));
-  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  document.getElementById("view-"+name).classList.add("active");
+/* ===================================================== Shopping */
+function shopState(it){return STATE.items[it.id];}
+function itemsForStore(store){return DATA.items.filter(it=>shopState(it).store===store);}
+function computeTotals(){
+  let grand=0,leftN=0,leftCost=0;
+  DATA.items.forEach(it=>{const s=shopState(it);if(!s.have){grand+=it.p;if(!s.checked){leftN++;leftCost+=it.p;}}});
+  return {grand,leftN,leftCost};
 }
-document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
+function staplesAllHave(){const st=DATA.items.filter(i=>i.staple);return st.length&&st.every(i=>shopState(i).have);}
+function renderShopping(){
+  const t=computeTotals();
+  const stOn=staplesAllHave();
+  let html=`<div class="shop-summary">
+    <div class="top">
+      <div><div class="tlabel">Estimated to buy</div><div class="total serif tnum">${money(t.grand)}</div></div>
+      <div><div class="left tnum">${t.leftN} item${t.leftN===1?'':'s'} left<br>${money(t.leftCost)} to go</div>
+      <button class="reset" id="reset">Reset list</button></div>
+    </div>
+    <button class="staple-toggle ${stOn?'on':''}" id="staples" role="switch" aria-checked="${stOn}">
+      <span class="sw"></span>
+      <span><span class="lbl">I already have my pantry staples</span><br>
+      <span class="sub">${stOn?'Marked as owned — dropped from the total':'Drops oil, butter, spices & more'}</span></span>
+    </button>
+    <div class="allergy" role="note" style="margin-top:14px">${IC.alert}
+      <div><p><b>Apple allergy — life-threatening.</b> No apple, apple juice, applesauce, or cider vinegar in any item.</p>
+      <p>Brown-sugar BBQ sauce: <b>read the label</b> before buying — cider vinegar and apple hide in many brands.</p></div></div>
+  </div>`;
 
-fetch("data/week.json")
-  .then(r => { if(!r.ok) throw new Error("week.json "+r.status); return r.json(); })
-  .then(d => {
-    DATA = d || {};
-    DATA.meals = Array.isArray(DATA.meals) ? DATA.meals : [];
-    DATA.grocery = Array.isArray(DATA.grocery) ? DATA.grocery : [];
-    document.getElementById("weekOf").textContent = DATA.weekOf ? "Week of " + DATA.weekOf : "";
-    document.getElementById("provisional").hidden = !DATA.provisional;
-    renderMeals();
-    renderShopping();
-  })
-  .catch(e => {
-    document.querySelector("main").innerHTML = '<div class="err">Couldn\'t load this week\'s plan ('+e.message+'). If you\'re opening the file directly, serve it over http instead.</div>';
+  DATA.storeOrder.forEach(store=>{
+    const items=itemsForStore(store);if(!items.length)return;
+    const sub=items.reduce((a,it)=>a+(shopState(it).have?0:it.p),0);
+    const info=DATA.stores[store]||{name:store,why:''};
+    html+=`<section class="store"><div class="store-head">
+      <div><div class="sname serif">${esc(info.name)}</div><div class="swhy">${esc(info.why)}</div></div>
+      <div class="ssub tnum">${money(sub)}</div></div>`;
+    SEC_ORDER.forEach(sec=>{
+      const secItems=items.filter(it=>it.sec===sec);if(!secItems.length)return;
+      html+=`<div class="subsec">${SEC_NAME[sec]}</div>`;
+      secItems.forEach(it=>html+=itemRow(it));
+    });
+    html+=`</section>`;
   });
+  $('#screen-shopping').innerHTML=html;
+
+  $('#staples').onclick=toggleStaples;
+  $('#reset').onclick=resetChecks;
+  $('#screen-shopping').querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{const s=STATE.items[b.dataset.check];s.checked=!s.checked;save();renderShopping();});
+  $('#screen-shopping').querySelectorAll('[data-have]').forEach(b=>b.onclick=()=>{const s=STATE.items[b.dataset.have];s.have=!s.have;if(s.have)s.checked=false;save();renderShopping();});
+  $('#screen-shopping').querySelectorAll('[data-move]').forEach(b=>b.onclick=()=>openSheet(b.dataset.move));
+}
+function itemRow(it){
+  const s=shopState(it);
+  return `<div class="item ${s.checked?'checked':''} ${s.have?'have-it':''}">
+    <button class="check" data-check="${it.id}" aria-pressed="${s.checked}" aria-label="Mark ${esc(it.n)} as in the cart">${IC.check}</button>
+    <div>
+      <div><span class="nm">${esc(it.n)}</span><span class="qty">${esc(it.q)}</span></div>
+      ${it.note?`<div class="note ${it.warn?'warn':''}">${esc(it.note)}</div>`:''}
+      <div class="row2">
+        <button class="move" data-move="${it.id}">${IC.move}Move</button>
+        <button class="have" data-have="${it.id}" aria-pressed="${s.have}">${s.have?IC.check+'Have it':'Have it?'}</button>
+      </div>
+    </div>
+    <div class="pr serif tnum">${money(it.p)}</div>
+  </div>`;
+}
+function toggleStaples(){
+  const on=staplesAllHave();
+  DATA.items.filter(i=>i.staple).forEach(i=>{STATE.items[i.id].have=!on;if(!on)STATE.items[i.id].checked=false;});
+  STATE.pantryOn=!on;save();renderShopping();
+}
+function resetChecks(){
+  DATA.items.forEach(i=>{STATE.items[i.id].checked=false;STATE.items[i.id].have=false;});
+  STATE.pantryOn=false;save();renderShopping();
+}
+
+/* ===================================================== Store reassign sheet */
+let sheetItem=null;
+function openSheet(id){
+  sheetItem=id;const cur=STATE.items[id].store;
+  let html=`<div class="grip"></div><h2 class="serif">Move to another store</h2>
+    <p class="ssub">${esc(DATA.items.find(i=>i.id===id).n)}</p>`;
+  DATA.storeOrder.forEach(store=>{
+    const info=DATA.stores[store]||{name:store,why:''};
+    html+=`<div class="opt ${store===cur?'current':''}" role="button" tabindex="0" data-store="${store}"${store===cur?' aria-current="true"':''} aria-label="Move to ${esc(info.name)}${store===cur?' (current store)':''}">
+      <span class="ostack"><span class="oname">${esc(info.name)}</span><span class="owhy">${esc(info.why)}</span></span>
+      <span class="otick" aria-hidden="true">${IC.check}</span></div>`;
+  });
+  $('#sheet').innerHTML=html;
+  $('#sheet').querySelectorAll('[data-store]').forEach(b=>{
+    const go=()=>{STATE.items[sheetItem].store=b.dataset.store;save();closeSheet();renderShopping();};
+    b.onclick=go;
+    b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+  });
+  $('#scrim').classList.add('show');$('#sheet').classList.add('show');
+}
+function closeSheet(){$('#scrim').classList.remove('show');$('#sheet').classList.remove('show');}
+
+/* ===================================================== Boot */
+function boot(d){
+  DATA=d;
+  if(!DATA.meals||!DATA.meals.length){fail('No meals are planned for this week yet.');return;}
+  DATA.items=Array.isArray(DATA.items)?DATA.items:[];
+  DATA.storeOrder=DATA.storeOrder||Object.keys(DATA.stores||{});
+  load();
+  $('#boot').style.display='none';
+  $('#tabbar').hidden=false;
+  renderWeek();renderShopping();
+  show('week');
+  $('#screen-week').classList.add('stagger');
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(t.dataset.tab));
+  $('#scrim').onclick=closeSheet;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#sheet').classList.contains('show'))closeSheet();else if($('#cook').classList.contains('open'))closeCook();}});
+}
+function fail(msg){
+  $('#boot').innerHTML=`<h2 class="serif">Can’t load the plan</h2><p>${esc(msg)}</p>`;
+}
+fetch('data/week.json',{cache:'no-store'})
+  .then(r=>{if(!r.ok)throw new Error(r.status);return r.json();})
+  .then(boot)
+  .catch(e=>fail('The week’s menu file (data/week.json) could not be loaded. If you opened this file directly, run it from the web instead.'));
 </script>
 </body>
 </html>

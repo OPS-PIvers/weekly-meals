@@ -1,8 +1,12 @@
-# Meal-Plan App Spec — v1 (ROUGH)
+# Meal-Plan App Spec — v1 (ROUGH) · SUPERSEDED
 
-> **Status: ROUGH / provisional.** This is the documented intent for the Pages app, captured so the shell stops being rebuilt from memory each week (the old drift bug). **Hardening to v2 is deferred** — pinning exact layout geometry, the scheduler back-calculation math, and full component states is a separate pass. Until then, `app/index.html` is labeled "provisional pending spec v2" and should not be polished mid-plan.
+> **Status: SUPERSEDED (kept for history).** The app was rebuilt to a committed design via the `impeccable` skill. The current sources of truth are:
+> - **`PRODUCT.md`** — register, users, purpose, brand personality, anti-references, design principles.
+> - **`DESIGN.md`** — the "Mise en place" visual system: OKLCH tokens (light + dark, all AA-verified), Newsreader + Figtree type, layout, components, motion.
+> - **`app/data/week.json`** (`schemaVersion: 2`) — the data contract: `meals[]` with `prep`/`cook` step arrays (`t`, `det`, `min`, `kid`, `off`, `timer`), `uses`/`saves` hand-offs, and `items[]` with `sec`/`store`/`p`/`staple`/`warn`/`note`.
+> - **`app/index.html`** — the production renderer (no longer provisional). It fetches `week.json`, back-calculates start times, runs the cook-along + timers, and persists shopping state to `localStorage` (keyed by `weekOf`).
 >
-> What *is* stable enough to rely on now: the **data schema** below (so `week.json` is consistent week to week) and the **acceptance checklist** (hard gates the shell must pass).
+> The acceptance checklist below remains a useful gate. The rest of this file is the original rough intent, retained so the history is legible.
 
 ## How the app is fed
 
