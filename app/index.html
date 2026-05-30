@@ -90,7 +90,7 @@ input{font:inherit}
 
 /* ============================================================ Masthead */
 .masthead{padding:34px 0 16px}
-.kicker{font-size:0.8125rem;font-weight:600;letter-spacing:0.01em;color:var(--primary-strong)}
+.kicker{font-size:0.8125rem;font-weight:600;letter-spacing:0.01em;color:var(--muted)}
 .mast-h1{font-weight:500;font-size:clamp(2.75rem,11vw,3.25rem);line-height:0.98;letter-spacing:-0.02em;margin:6px 0 10px;text-wrap:balance}
 .subtitle{font-style:italic;font-size:1.1875rem;line-height:1.35;color:var(--muted);max-width:42ch;text-wrap:pretty}
 
@@ -108,17 +108,18 @@ input{font:inherit}
 .rulelabel.lead::before{content:"";flex:none}
 
 /* ============================================================ Night list */
-.night{display:grid;grid-template-columns:3.25rem 1fr 22px;align-items:start;gap:6px 14px;width:100%;text-align:left;cursor:pointer;
+.night{display:grid;grid-template-columns:3.25rem 1fr 22px;align-items:start;gap:0 14px;width:100%;text-align:left;cursor:pointer;
   padding:22px 0;border-top:1px solid var(--line);position:relative;transition:background .18s var(--ease)}
 .night:first-of-type{border-top:none}
 .night:active{background:var(--surface)}
-.night .idx{grid-row:1 / span 6;font-size:2.5rem;line-height:1;font-weight:400;color:var(--line-2);font-variant-numeric:tabular-nums;padding-top:2px}
+.night .idx{font-size:2.5rem;line-height:1;font-weight:400;color:var(--line-2);font-variant-numeric:tabular-nums;padding-top:2px}
+.night .ninfo{min-width:0}
 .night .cuisine{font-size:0.75rem;font-weight:600;letter-spacing:0.02em;color:var(--faint)}
 .night .name{font-weight:500;font-size:1.5rem;line-height:1.1;color:var(--ink);letter-spacing:-0.01em;margin-top:2px;text-wrap:balance}
 .night .blurb{font-style:italic;font-size:1rem;color:var(--muted);line-height:1.35;margin-top:5px;text-wrap:pretty}
 .night .meta{font-size:0.8125rem;color:var(--faint);font-weight:500;margin-top:9px}
 .night .meta .dot{opacity:.5;margin:0 7px}
-.night .chev{grid-row:1 / span 6;align-self:center;color:var(--line-2);width:20px;height:20px}
+.night .chev{align-self:center;color:var(--line-2);width:20px;height:20px}
 
 /* staggered entrance, first paint only */
 .stagger .night{opacity:0;animation:rise .5s var(--ease) forwards}
@@ -432,8 +433,6 @@ function renderWeek(){
     <div class="kicker">${esc(d.weekLabel||'')}</div>
     <h1 class="serif mast-h1">This Week</h1>
     <p class="serif subtitle">${esc(d.subtitle||'')}</p>
-    <div class="allergy strip" role="note">${IC.alert}
-      <p><b>Apple allergy.</b> Nothing this week contains apple, apple juice, or cider vinegar. Check the BBQ sauce label.</p></div>
   </header>
   <div class="rulelabel">Cook in order</div>
   <div class="nights stagger">`;
@@ -446,11 +445,13 @@ function renderWeek(){
     (m.uses||[]).forEach(u=>{tags+=`<span class="tag">${IC.arrowL}Uses ${esc(short(u.from))}</span>`;});
     html+=`<div class="night" role="button" tabindex="0" data-meal="${i}" aria-label="Night ${i+1}: ${esc(m.name)}">
       <div class="idx serif" aria-hidden="true">${i+1}</div>
-      <div class="cuisine">${esc(m.cuisine)}</div>
-      <div class="name serif">${esc(m.name)}</div>
-      <p class="blurb serif">${esc(m.blurb)}</p>
-      <div class="meta tnum">${esc(EFFORT[m.effort]||'')}<span class="dot">·</span>${m.activeMin} min hands-on<span class="dot">·</span>${fmtDur(total)} total</div>
-      <div class="tags">${tags}</div>
+      <div class="ninfo">
+        <div class="cuisine">${esc(m.cuisine)}</div>
+        <div class="name serif">${esc(m.name)}</div>
+        <p class="blurb serif">${esc(m.blurb)}</p>
+        <div class="meta tnum">${esc(EFFORT[m.effort]||'')}<span class="dot">·</span>${m.activeMin} min hands-on<span class="dot">·</span>${fmtDur(total)} total</div>
+        <div class="tags">${tags}</div>
+      </div>
       <span class="chev" aria-hidden="true">${IC.chev}</span>
     </div>`;
   });
@@ -652,9 +653,6 @@ function renderShopping(){
       <span><span class="lbl">I already have my pantry staples</span><br>
       <span class="sub">${stOn?'Marked as owned — dropped from the total':'Drops oil, butter, spices & more'}</span></span>
     </button>
-    <div class="allergy" role="note" style="margin-top:14px">${IC.alert}
-      <div><p><b>Apple allergy — life-threatening.</b> No apple, apple juice, applesauce, or cider vinegar in any item.</p>
-      <p>Brown-sugar BBQ sauce: <b>read the label</b> before buying — cider vinegar and apple hide in many brands.</p></div></div>
   </div>`;
 
   DATA.storeOrder.forEach(store=>{
