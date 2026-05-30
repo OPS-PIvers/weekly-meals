@@ -62,6 +62,9 @@ _(Add the rest from Paul's known vetoes — this list is intentionally short unt
 - Smoked BBQ (pork ribs)
 - Soy-garlic chicken thighs
 - Cilantro-lime steak (tacos)
+- Smoked garlic-butter chicken thighs _(2026-06-06 smoker win)_
+- Pesto chicken & broccoli angel hair _(Italian, low-effort)_
+- Garlic-butter smash burgers _(American)_
 
 _(Grow this as weeks are approved.)_
 

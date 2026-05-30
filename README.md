@@ -17,20 +17,25 @@ The PR review is the anti-drift gate: a preference or history change is only per
 
 ```
 SKILL.md                          behavior / workflow engine (the core)
+PRODUCT.md                        product strategy: users, purpose, principles (design source of truth)
+DESIGN.md                         "Mise en place" visual system: OKLCH tokens, type, components, motion
 references/preferences.md         constraints + family profile (writable via PR)
 references/meal-history.md        rolling log of approved weeks (appended via PR)
-references/meal-plan-app-spec.md  app spec + data schema (v1 ROUGH; v2 hardening deferred)
-app/index.html                    Pages app shell, built once (provisional pending spec v2)
-app/data/week.json                the week's meals + grocery list (the only weekly change)
+references/meal-plan-app-spec.md  original v1 app spec (SUPERSEDED by PRODUCT.md + DESIGN.md)
+app/index.html                    production Pages app — renders week.json, built once
+app/data/week.json                the week's meals + grocery list, schemaVersion 2 (the only weekly change)
 ```
 
 ## App / Pages
 
-- Single static `index.html` + `data/week.json`, no build step.
+- Single static `index.html` + `data/week.json`, no build step. Vanilla HTML/CSS/JS.
 - Pages: **deploy from a branch**, `main` at **root** — the app is served at `…/weekly-meals/app/` and reads `…/weekly-meals/app/data/week.json`.
-- The app is currently **provisional pending spec v2**; the shell meets the acceptance checklist in the spec but its layout/scheduler math aren't hardened yet.
+- **Design lives in `DESIGN.md` (visual) and `PRODUCT.md` (strategy)**, produced with the [`impeccable`](https://impeccable.style) skill. The app shell is built once against those; only `week.json` changes weekly.
+- Mobile-first (`max-width 560px`), light + dark themes (AA contrast verified), `prefers-reduced-motion` honored. Shopping state, serve times, and toggles persist in `localStorage`, keyed by `weekOf`.
 
-## Deferred (separate pass)
+## What the app does
 
-- Harden `references/meal-plan-app-spec.md` to v2 (pin layout geometry, scheduler math, component states, data contract) so two builds come out identical.
-- Then polish `app/index.html` against the hardened spec and flip the app from "offer" to auto-build.
+- **This Week** — the three nights as an editorial list (no cards), with cross-meal hand-off tags and an unmissable apple-allergy strip.
+- **Recipe** — stats strip, a serve-time scheduler that back-calculates "begin your first step at …", prep-then-cook step rows each showing their clock time, and carryover notes.
+- **Cook-along** — full-screen, one step at a time, progress bar, and countdown timers on wait steps that beep + vibrate at zero.
+- **Shopping** — grouped by store then section, with running subtotals/grand total, check vs. "have it", a pantry-staples master toggle, and store reassignment.
