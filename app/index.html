@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Weekly Meals</title>
+<!--
+  PROVISIONAL app shell — "provisional pending spec v2".
+  Built from references/meal-plan-app-spec.md (v1 ROUGH). The shell is built ONCE;
+  only app/data/week.json changes weekly. Don't polish this mid-plan — wait for spec v2.
+-->
+<style>
+  :root {
+    --bg: #14171c;
+    --panel: #1d222a;
+    --panel-2: #252b35;
+    --text: #e8ecf2;
+    --muted: #9aa6b5;
+    --line: #333b47;
+    --accent: #6fb1ff;
+    --low: #5bd1a0;
+    --med: #f2c14e;
+    --high: #ff8f6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.45;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  header { padding: 18px 16px 8px; }
+  h1 { font-size: 1.4rem; margin: 0; }
+  .week { color: var(--muted); font-size: 0.95rem; margin-top: 2px; }
+  .provisional {
+    margin: 10px 16px; padding: 8px 12px; border: 1px dashed var(--line);
+    border-radius: 8px; color: var(--muted); font-size: 0.85rem;
+  }
+  nav { display: flex; gap: 6px; padding: 6px 12px; position: sticky; top: 0; background: var(--bg); z-index: 5; }
+  nav button {
+    flex: 1; padding: 10px; border: 1px solid var(--line); background: var(--panel);
+    color: var(--text); border-radius: 8px; font-size: 0.95rem;
+  }
+  nav button.active { border-color: var(--accent); color: var(--accent); }
+  main { padding: 8px 12px 60px; }
+  section.view { display: none; }
+  section.view.active { display: block; }
+
+  .meal { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+  .meal h2 { margin: 0 0 4px; font-size: 1.15rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .tag { font-size: 0.78rem; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); color: var(--muted); }
+  .tag.effort-Low { color: var(--low); }
+  .tag.effort-Med { color: var(--med); }
+  .tag.effort-High { color: var(--high); }
+
+  .sched { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 0.9rem; color: var(--muted); }
+  .sched input[type=time] { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+
+  ul.steps { list-style: none; padding: 0; margin: 8px 0 0; }
+  ul.steps li { border-top: 1px solid var(--line); padding: 10px 0; display: flex; gap: 10px; align-items: flex-start; }
+  .step-start { width: 64px; flex-shrink: 0; color: var(--accent); font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+  .step-body { flex: 1; }
+  .step-meta { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+  .handoff { color: var(--high); }
+  .timer-btn { margin-top: 6px; padding: 5px 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); border-radius: 6px; font-size: 0.82rem; }
+  .timer-btn.running { border-color: var(--accent); color: var(--accent); }
+
+  details.ingredients { margin-top: 8px; }
+  details.ingredients summary { color: var(--muted); font-size: 0.88rem; cursor: pointer; }
+  details.ingredients ul { margin: 6px 0 0; padding-left: 18px; color: var(--text); font-size: 0.9rem; }
+
+  .store-group { margin-bottom: 14px; }
+  .store-group h3 { font-size: 1rem; margin: 0 0 6px; color: var(--accent); }
+  .item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .item.onhand .item-name { color: var(--muted); text-decoration: line-through; }
+  .item input[type=checkbox] { width: 20px; height: 20px; flex-shrink: 0; }
+  .item-name { flex: 1; }
+  .item-qty { color: var(--muted); font-size: 0.85rem; }
+  .item-section { color: var(--muted); font-size: 0.75rem; }
+  .item select { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 3px 4px; font-size: 0.78rem; }
+  .err { padding: 16px; color: var(--high); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Weekly Meals</h1>
+  <div class="week" id="weekOf"></div>
+</header>
+<div class="provisional" id="provisional" hidden>Provisional app — pending spec v2.</div>
+<nav>
+  <button data-view="meals" class="active">Meals</button>
+  <button data-view="shopping">Shopping</button>
+</nav>
+<main>
+  <section class="view active" id="view-meals"></section>
+  <section class="view" id="view-shopping"></section>
+</main>
+
+<script>
+const STORES = ["Costco", "Cub", "Target", "Other"];
+let DATA = null;
+let audioCtx = null;
+
+// Unlock/resume audio during a direct user gesture — mobile browsers block
+// AudioContext started later from setInterval (autoplay policy), which would
+// otherwise silence the timer beep.
+function initAudio(){
+  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+}
+
+function pad(n){ return String(n).padStart(2,"0"); }
+function parseTime(s){
+  const parts = String(s||"").split(":").map(Number);
+  const mins = parts[0]*60 + parts[1];
+  return Number.isFinite(mins) ? mins : 18*60; // fall back to 18:00 on malformed input
+}
+function fmtTime(mins){ mins=((mins%1440)+1440)%1440; return pad(Math.floor(mins/60))+":"+pad(mins%60); }
+
+// Scheduler: back-calculate each step's start from serveTime minus the sum of remaining step minutes.
+function startTimes(meal){
+  const serve = parseTime(meal.serveTime);
+  const steps = Array.isArray(meal.steps) ? meal.steps : [];
+  const total = steps.reduce((a,s)=>a+(s.min||0),0);
+  let elapsed = 0;
+  return steps.map(s => { const start = serve - total + elapsed; elapsed += (s.min||0); return start; });
+}
+
+function renderMeals(){
+  const el = document.getElementById("view-meals");
+  el.innerHTML = "";
+  DATA.meals.forEach(meal => {
+    const starts = startTimes(meal);
+    const div = document.createElement("div");
+    div.className = "meal";
+    div.innerHTML = `
+      <h2>${meal.name}</h2>
+      <div class="tags">
+        <span class="tag effort-${meal.effort}">${meal.effort} effort</span>
+        <span class="tag">${meal.protein}</span>
+        <span class="tag">${meal.method}</span>
+        <span class="tag">${meal.flavor}</span>
+        <span class="tag">${meal.servings} servings</span>
+      </div>
+      <div class="sched">
+        Serve at <input type="time" value="${meal.serveTime}" data-meal="${meal.id}"> &middot; start by <strong class="start0">${fmtTime(starts[0])}</strong>
+      </div>
+    `;
+    const ul = document.createElement("ul");
+    ul.className = "steps";
+    (meal.steps || []).forEach((s,i) => {
+      const li = document.createElement("li");
+      const meta = `${s.min} min${s.active ? " · active" : " · unattended"}${s.handoff ? ' · <span class="handoff">hand-off</span>' : ""}`;
+      li.innerHTML = `
+        <div class="step-start" data-step="${i}">${fmtTime(starts[i])}</div>
+        <div class="step-body">
+          <div>${s.label}</div>
+          <div class="step-meta">${meta}</div>
+          <button class="timer-btn" data-min="${s.min}">Start ${s.min}m timer</button>
+        </div>`;
+      ul.appendChild(li);
+    });
+    div.appendChild(ul);
+    if (meal.leftoversNote){
+      const note = document.createElement("div");
+      note.className = "step-meta"; note.style.marginTop = "8px";
+      note.textContent = "Leftovers: " + meal.leftoversNote;
+      div.appendChild(note);
+    }
+    if (meal.ingredients && meal.ingredients.length){
+      const det = document.createElement("details");
+      det.className = "ingredients";
+      det.innerHTML = "<summary>Ingredients</summary><ul>" +
+        meal.ingredients.map(x=>`<li>${x.qty} — ${x.name}</li>`).join("") + "</ul>";
+      div.appendChild(det);
+    }
+    // live re-schedule on serve-time change
+    div.querySelector("input[type=time]").addEventListener("change", e => {
+      meal.serveTime = e.target.value;
+      const st = startTimes(meal);
+      div.querySelector(".start0").textContent = fmtTime(st[0]);
+      div.querySelectorAll(".step-start").forEach((node,idx)=> node.textContent = fmtTime(st[idx]));
+    });
+    el.appendChild(div);
+  });
+
+  // timers
+  el.querySelectorAll(".timer-btn").forEach(btn => {
+    btn.addEventListener("click", () => startTimer(btn, parseInt(btn.dataset.min,10)));
+  });
+}
+
+function startTimer(btn, mins){
+  if (btn.dataset.running) return;
+  try { initAudio(); } catch(e){}
+  let remaining = mins*60;
+  const label = btn.textContent;
+  btn.dataset.running = "1";
+  btn.classList.add("running");
+  const tick = () => {
+    if (remaining <= 0){
+      clearInterval(iv);
+      delete btn.dataset.running;
+      btn.classList.remove("running");
+      btn.textContent = "Done";
+      ding();
+      return;
+    }
+    btn.textContent = pad(Math.floor(remaining/60))+":"+pad(remaining%60);
+    remaining--;
+  };
+  tick();
+  const iv = setInterval(tick, 1000);
+}
+
+function ding(){
+  try {
+    if (navigator.vibrate) navigator.vibrate([400,150,400]);
+    const ctx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination); o.type = "square"; o.frequency.value = 880;
+    g.gain.setValueAtTime(0.2, ctx.currentTime);
+    o.start();
+    o.stop(ctx.currentTime + 0.8);
+  } catch(e){}
+}
+
+function renderShopping(){
+  const el = document.getElementById("view-shopping");
+  el.innerHTML = "";
+  const draw = () => {
+    el.innerHTML = "";
+    const byStore = {};
+    DATA.grocery.forEach(it => { (byStore[it.store] = byStore[it.store] || []).push(it); });
+    Object.keys(byStore).sort().forEach(store => {
+      const group = document.createElement("div");
+      group.className = "store-group";
+      group.innerHTML = `<h3>${store}</h3>`;
+      byStore[store].forEach(it => {
+        const row = document.createElement("div");
+        row.className = "item" + (it.onHand ? " onhand" : "");
+        const itemStores = STORES.includes(it.store) ? STORES : [...STORES, it.store];
+        const opts = itemStores.map(s=>`<option ${s===it.store?"selected":""}>${s}</option>`).join("");
+        row.innerHTML = `
+          <input type="checkbox" ${it.onHand?"checked":""}>
+          <span class="item-name">${it.name}</span>
+          <span class="item-qty">${it.qty}</span>
+          <span class="item-section">${it.section}</span>
+          <select>${opts}</select>`;
+        row.querySelector("input").addEventListener("change", e => { it.onHand = e.target.checked; row.classList.toggle("onhand", it.onHand); });
+        row.querySelector("select").addEventListener("change", e => { it.store = e.target.value; draw(); });
+        group.appendChild(row);
+      });
+      el.appendChild(group);
+    });
+  };
+  draw();
+}
+
+function switchView(name){
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active", b.dataset.view===name));
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById("view-"+name).classList.add("active");
+}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
+
+fetch("data/week.json")
+  .then(r => { if(!r.ok) throw new Error("week.json "+r.status); return r.json(); })
+  .then(d => {
+    DATA = d || {};
+    DATA.meals = Array.isArray(DATA.meals) ? DATA.meals : [];
+    DATA.grocery = Array.isArray(DATA.grocery) ? DATA.grocery : [];
+    document.getElementById("weekOf").textContent = DATA.weekOf ? "Week of " + DATA.weekOf : "";
+    document.getElementById("provisional").hidden = !DATA.provisional;
+    renderMeals();
+    renderShopping();
+  })
+  .catch(e => {
+    document.querySelector("main").innerHTML = '<div class="err">Couldn\'t load this week\'s plan ('+e.message+'). If you\'re opening the file directly, serve it over http instead.</div>';
+  });
+</script>
+</body>
+</html>
