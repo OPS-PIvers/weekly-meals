@@ -1,0 +1,93 @@
+{
+  "weekOf": "2026-05-30",
+  "provisional": true,
+  "meals": [
+    {
+      "id": "smoked-bbq-ribs",
+      "name": "Smoked BBQ Ribs",
+      "effort": "High",
+      "protein": "Pork",
+      "method": "Smoker",
+      "flavor": "American BBQ",
+      "servings": 6,
+      "serveTime": "18:00",
+      "leftoversNote": "Reheat low and slow next day; great in tacos or on a bun.",
+      "steps": [
+        { "label": "Trim ribs, remove membrane, apply dry rub", "min": 20, "active": true, "handoff": false },
+        { "label": "Preheat smoker to 225°F", "min": 25, "active": false, "handoff": false },
+        { "label": "Smoke ribs (spritz hourly)", "min": 300, "active": false, "handoff": true },
+        { "label": "Wrap, sauce, and finish", "min": 40, "active": true, "handoff": false },
+        { "label": "Rest, then slice", "min": 15, "active": false, "handoff": false }
+      ],
+      "ingredients": [
+        { "name": "Pork spare ribs", "qty": "2 racks (~5 lb)" },
+        { "name": "Dry rub (brown sugar, paprika, garlic, salt, pepper)", "qty": "~1/2 cup" },
+        { "name": "BBQ sauce (apple-free)", "qty": "1 1/2 cups" }
+      ]
+    },
+    {
+      "id": "soy-garlic-chicken-thighs",
+      "name": "Soy-Garlic Chicken Thighs",
+      "effort": "Low",
+      "protein": "Chicken",
+      "method": "Sheet-pan/roast",
+      "flavor": "East-Asian savory",
+      "servings": 6,
+      "serveTime": "18:00",
+      "leftoversNote": "Shred leftovers over rice or into a quick noodle bowl.",
+      "steps": [
+        { "label": "Whisk soy-garlic marinade, coat thighs", "min": 10, "active": true, "handoff": false },
+        { "label": "Roast at 425°F", "min": 35, "active": false, "handoff": true },
+        { "label": "Rest and serve", "min": 5, "active": true, "handoff": false }
+      ],
+      "ingredients": [
+        { "name": "Bone-in chicken thighs", "qty": "8 (~3 lb)" },
+        { "name": "Soy sauce", "qty": "1/3 cup" },
+        { "name": "Garlic", "qty": "6 cloves" },
+        { "name": "Honey", "qty": "2 tbsp" },
+        { "name": "Rice", "qty": "2 cups dry" }
+      ]
+    },
+    {
+      "id": "cilantro-lime-steak-tacos",
+      "name": "Cilantro-Lime Steak Tacos",
+      "effort": "Med",
+      "protein": "Beef",
+      "method": "Sear/grill",
+      "flavor": "Mexican-bright",
+      "servings": 6,
+      "serveTime": "18:00",
+      "leftoversNote": "Steak keeps well; rewarm gently for tacos or rice bowls.",
+      "steps": [
+        { "label": "Marinate steak in cilantro-lime", "min": 30, "active": false, "handoff": true },
+        { "label": "Prep toppings (onion, cilantro, lime, cotija)", "min": 15, "active": true, "handoff": false },
+        { "label": "Sear steak to medium, rest", "min": 15, "active": true, "handoff": false },
+        { "label": "Slice, warm tortillas, assemble", "min": 10, "active": true, "handoff": false }
+      ],
+      "ingredients": [
+        { "name": "Flank or skirt steak", "qty": "2 lb" },
+        { "name": "Limes", "qty": "4" },
+        { "name": "Cilantro", "qty": "1 bunch" },
+        { "name": "Corn tortillas", "qty": "18" },
+        { "name": "White onion", "qty": "1" },
+        { "name": "Cotija cheese", "qty": "4 oz" }
+      ]
+    }
+  ],
+  "grocery": [
+    { "name": "Pork spare ribs", "qty": "2 racks (~5 lb)", "section": "Meat", "store": "Costco", "onHand": false },
+    { "name": "Bone-in chicken thighs", "qty": "8 (~3 lb)", "section": "Meat", "store": "Costco", "onHand": false },
+    { "name": "Flank or skirt steak", "qty": "2 lb", "section": "Meat", "store": "Costco", "onHand": false },
+    { "name": "Limes", "qty": "4", "section": "Produce", "store": "Cub", "onHand": false },
+    { "name": "Cilantro", "qty": "1 bunch", "section": "Produce", "store": "Cub", "onHand": false },
+    { "name": "White onion", "qty": "1", "section": "Produce", "store": "Cub", "onHand": false },
+    { "name": "Garlic", "qty": "1 head", "section": "Produce", "store": "Cub", "onHand": false },
+    { "name": "Cotija cheese", "qty": "4 oz", "section": "Dairy", "store": "Cub", "onHand": false },
+    { "name": "Corn tortillas", "qty": "18", "section": "Pantry", "store": "Cub", "onHand": false },
+    { "name": "Rice", "qty": "2 cups dry", "section": "Pantry", "store": "Cub", "onHand": true },
+    { "name": "Soy sauce", "qty": "1/3 cup", "section": "Pantry", "store": "Cub", "onHand": true },
+    { "name": "Honey", "qty": "2 tbsp", "section": "Pantry", "store": "Cub", "onHand": true },
+    { "name": "Dry rub spices", "qty": "~1/2 cup", "section": "Pantry", "store": "Cub", "onHand": true },
+    { "name": "BBQ sauce (apple-free)", "qty": "1 1/2 cups", "section": "Pantry", "store": "Cub", "onHand": false }
+  ]
+}
