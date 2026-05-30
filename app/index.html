@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#15191c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" id="metatheme">
 <title>This Week — dinners</title>
+<script>try{if(localStorage.getItem('mep:theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
 <style>
 /* ============================================================ Tokens */
 :root{
-  color-scheme: light dark;
+  color-scheme: light;
   --bg: oklch(1 0 0);
   --surface: oklch(0.976 0.004 160);
   --surface-2: oklch(0.958 0.006 160);
@@ -40,30 +40,29 @@
   --tabh: 60px;
   --z-sticky: 100; --z-tabbar: 200; --z-scrim: 300; --z-sheet: 310; --z-cook: 400;
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg: oklch(0.165 0.008 160);
-    --surface: oklch(0.205 0.010 160);
-    --surface-2: oklch(0.235 0.012 160);
-    --line: oklch(0.295 0.012 160);
-    --line-2: oklch(0.370 0.014 160);
-    --ink: oklch(0.945 0.008 160);
-    --muted: oklch(0.720 0.014 160);
-    --faint: oklch(0.580 0.012 160);
-    --primary: oklch(0.760 0.140 160);
-    --primary-strong: oklch(0.800 0.140 160);
-    --primary-ink: oklch(0.180 0.020 160);
-    --primary-wash: oklch(0.270 0.040 160);
-    --primary-line: oklch(0.760 0.140 160 / 0.30);
-    --accent: oklch(0.780 0.120 65);
-    --accent-ink: oklch(0.180 0.020 65);
-    --accent-wash: oklch(0.300 0.040 65);
-    --accent-line: oklch(0.780 0.120 65 / 0.32);
-    --warn: oklch(0.700 0.160 25);
-    --warn-bg: oklch(0.300 0.050 25);
-    --warn-line: oklch(0.700 0.160 25 / 0.40);
-    --shadow: 0 1px 2px oklch(0 0 0 / 0.3), 0 10px 34px oklch(0 0 0 / 0.45);
-  }
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg: oklch(0.190 0.024 178);
+  --surface: oklch(0.225 0.026 178);
+  --surface-2: oklch(0.255 0.028 178);
+  --line: oklch(0.310 0.022 178);
+  --line-2: oklch(0.400 0.024 178);
+  --ink: oklch(0.950 0.012 95);
+  --muted: oklch(0.750 0.020 170);
+  --faint: oklch(0.620 0.018 172);
+  --primary: oklch(0.740 0.130 160);
+  --primary-strong: oklch(0.800 0.130 160);
+  --primary-ink: oklch(0.170 0.030 165);
+  --primary-wash: oklch(0.300 0.055 170);
+  --primary-line: oklch(0.740 0.130 160 / 0.32);
+  --accent: oklch(0.800 0.115 72);
+  --accent-ink: oklch(0.170 0.025 72);
+  --accent-wash: oklch(0.310 0.050 60);
+  --accent-line: oklch(0.800 0.115 72 / 0.34);
+  --warn: oklch(0.720 0.160 25);
+  --warn-bg: oklch(0.310 0.060 20);
+  --warn-line: oklch(0.720 0.160 25 / 0.40);
+  --shadow: 0 1px 2px oklch(0 0 0 / 0.32), 0 10px 34px oklch(0 0 0 / 0.5);
 }
 /* ============================================================ Base */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -89,8 +88,11 @@ input{font:inherit}
 @keyframes screen-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 /* ============================================================ Masthead */
-.masthead{padding:34px 0 16px}
-.kicker{font-size:0.8125rem;font-weight:600;letter-spacing:0.01em;color:var(--muted)}
+.masthead{padding:34px 0 16px;position:relative}
+.theme-toggle{position:absolute;top:30px;right:0;width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);color:var(--muted);transition:color .15s var(--ease),border-color .15s var(--ease)}
+.theme-toggle:active{color:var(--primary);border-color:var(--primary-line)}
+.theme-toggle svg{width:20px;height:20px}
+.kicker{font-size:0.8125rem;font-weight:600;letter-spacing:0.01em;color:var(--muted);padding-right:50px}
 .mast-h1{font-weight:500;font-size:clamp(2.75rem,11vw,3.25rem);line-height:0.98;letter-spacing:-0.02em;margin:6px 0 10px;text-wrap:balance}
 .subtitle{font-style:italic;font-size:1.1875rem;line-height:1.35;color:var(--muted);max-width:42ch;text-wrap:pretty}
 
@@ -368,7 +370,20 @@ const IC = {
   x:     I('<path d="M6 6 18 18M18 6 6 18"/>'),
   leaf:  I('<path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 16-9 0 12-4 16-9 16Z"/><path d="M11 13c0-3 3-6 6-7"/>'),
   box:   I('<path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/>'),
+  moon:  I('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>'),
+  sun:   I('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
 };
+
+/* ===================================================== Theme */
+function currentTheme(){try{return localStorage.getItem('mep:theme')==='dark'?'dark':'light';}catch(e){return 'light';}}
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'');
+  try{localStorage.setItem('mep:theme',t);}catch(e){}
+  const m=document.getElementById('metatheme');if(m)m.setAttribute('content',t==='dark'?'#16201d':'#ffffff');
+  const b=document.getElementById('themebtn');
+  if(b){b.innerHTML=t==='dark'?IC.sun:IC.moon;b.setAttribute('aria-label',t==='dark'?'Switch to light theme':'Switch to dark theme');}
+}
+function toggleTheme(){applyTheme(currentTheme()==='dark'?'light':'dark');}
 
 /* ===================================================== State + helpers */
 let DATA=null, STATE=null;
@@ -430,6 +445,7 @@ function show(screen){
 function renderWeek(){
   const d=DATA;
   let html=`<header class="masthead">
+    <button class="theme-toggle" id="themebtn" aria-label="Switch theme">${IC.moon}</button>
     <div class="kicker">${esc(d.weekLabel||'')}</div>
     <h1 class="serif mast-h1">This Week</h1>
     <p class="serif subtitle">${esc(d.subtitle||'')}</p>
@@ -462,6 +478,7 @@ function renderWeek(){
     b.addEventListener('click',go);
     b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
   });
+  const tb=$('#themebtn');if(tb)tb.onclick=toggleTheme;
 }
 // shorten a "Night 2 — Pesto Chicken Pasta" handoff label to its essence
 function short(s){
@@ -734,6 +751,7 @@ function boot(d){
   $('#boot').style.display='none';
   $('#tabbar').hidden=false;
   renderWeek();renderShopping();
+  applyTheme(currentTheme());
   show('week');
   $('#screen-week').classList.add('stagger');
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(t.dataset.tab));

@@ -10,7 +10,7 @@ Color strategy: **Restrained** — neutral surfaces, one green primary, a sparin
 
 ## Color
 
-OKLCH. Pure-white light surface and tinted-charcoal dark surface; the mood lives in the green primary and the type, never in a warm-tinted background.
+OKLCH. **Light is the app's default** (it does not follow the OS into dark); a remembered Light/Dark toggle in the masthead switches themes, persisted to `localStorage` (`mep:theme`). Dark is opt-in and intentionally *not* a cold graphite + neon-mint scheme — it's a deep pine-ink surface so it reads as a deliberate "evening kitchen", distinct from the old v1 look.
 
 ### Light (default scene: bright kitchen counter, clean daylight)
 
@@ -36,31 +36,31 @@ OKLCH. Pure-white light surface and tinted-charcoal dark surface; the mood lives
 --warn-line:     oklch(0.520 0.200 25 / 0.35);
 ```
 
-### Dark (scene: evening prep under range-hood light)
+### Dark (opt-in scene: evening prep, deep pine-ink — not v1 graphite)
 
 ```css
---bg:            oklch(0.165 0.008 160);    /* tinted charcoal, not pure black, not cream */
---surface:       oklch(0.205 0.010 160);
---surface-2:     oklch(0.235 0.012 160);
---line:          oklch(0.295 0.012 160);
---line-2:        oklch(0.370 0.014 160);
---ink:           oklch(0.945 0.008 160);    /* ~13:1 on bg */
---muted:         oklch(0.720 0.014 160);    /* ~6:1 */
---faint:         oklch(0.580 0.012 160);    /* ~3.7:1 */
---primary:       oklch(0.760 0.140 160);    /* bright green */
---primary-strong:oklch(0.800 0.140 160);
---primary-ink:   oklch(0.180 0.020 160);    /* dark text on the bright-green fill */
---primary-wash:  oklch(0.270 0.040 160);
---primary-line:  oklch(0.760 0.140 160 / 0.30);
---accent:        oklch(0.780 0.120 65);
---accent-ink:    oklch(0.180 0.020 65);
---accent-wash:   oklch(0.300 0.040 65);
---warn:          oklch(0.700 0.160 25);
---warn-bg:       oklch(0.300 0.050 25);
---warn-line:     oklch(0.700 0.160 25 / 0.40);
+--bg:            oklch(0.190 0.024 178);    /* deep pine-ink, clearly tinted (not cold near-black) */
+--surface:       oklch(0.225 0.026 178);
+--surface-2:     oklch(0.255 0.028 178);
+--line:          oklch(0.310 0.022 178);
+--line-2:        oklch(0.400 0.024 178);
+--ink:           oklch(0.950 0.012 95);     /* warm off-white (~16:1 on bg) */
+--muted:         oklch(0.750 0.020 170);    /* ~8.3:1 */
+--faint:         oklch(0.620 0.018 172);    /* ~5.1:1 */
+--primary:       oklch(0.740 0.130 160);    /* calmer green, less neon than v1 */
+--primary-strong:oklch(0.800 0.130 160);
+--primary-ink:   oklch(0.170 0.030 165);    /* dark text on the green fill */
+--primary-wash:  oklch(0.300 0.055 170);
+--primary-line:  oklch(0.740 0.130 160 / 0.32);
+--accent:        oklch(0.800 0.115 72);     /* warm clay carries more weight in dark */
+--accent-ink:    oklch(0.170 0.025 72);
+--accent-wash:   oklch(0.310 0.050 60);
+--warn:          oklch(0.720 0.160 25);
+--warn-bg:       oklch(0.310 0.060 20);
+--warn-line:     oklch(0.720 0.160 25 / 0.40);
 ```
 
-Filled-fill text rule: light-mode primary (L 0.52) takes white text; dark-mode primary (L 0.76) takes dark `--primary-ink`. Always light-fill→dark-text, dark-fill→light-text. Red is reserved exclusively for the apple-allergy warning; the warm clay accent is used only for the "try something new" flag and the back-calculated start time.
+Filled-fill text rule: light-mode primary (L 0.52) takes white text; dark-mode primary (L 0.74) takes dark `--primary-ink`. Always light-fill→dark-text, dark-fill→light-text. Red is reserved exclusively for the apple-allergy warning; the warm clay accent is used only for the "try something new" flag and the back-calculated start time.
 
 ## Typography
 
