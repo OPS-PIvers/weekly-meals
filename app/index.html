@@ -176,6 +176,18 @@ input{font:inherit}
 .carry .ci{font-size:0.9375rem;color:var(--ink);font-weight:500;line-height:1.4;margin-top:3px}
 .carry .cn{font-size:0.8125rem;color:var(--muted)}
 
+/* gather list (mise en place) */
+.mise{margin-top:2px}
+.ming{display:flex;align-items:flex-start;gap:13px;width:100%;text-align:left;cursor:pointer;padding:13px 0;border-top:1px solid var(--line)}
+.ming:first-child{border-top:none}
+.ming .mck{flex:none;position:relative;width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2);margin-top:1px;display:flex;align-items:center;justify-content:center;transition:background .15s var(--ease),border-color .15s var(--ease)}
+.ming .mck::after{content:"";position:absolute;inset:-9px}
+.ming .mck svg{width:13px;height:13px;color:var(--primary-ink);opacity:0;transition:opacity .12s}
+.ming.got .mck{background:var(--primary);border-color:var(--primary)}
+.ming.got .mck svg{opacity:1}
+.ming .mtxt{font-size:1rem;font-weight:500;color:var(--ink);line-height:1.4}
+.ming.got .mtxt{text-decoration:line-through;color:var(--faint)}
+
 /* step rows */
 .step{display:grid;grid-template-columns:3.25rem 1fr;gap:4px 14px;padding:18px 0;border-top:1px solid var(--line)}
 .step .rail{text-align:right;padding-top:2px}
@@ -513,6 +525,11 @@ function renderRecipe(){
       <span class="t serif tnum" id="beginat">${fmtClock(sc.start)}</span></div>
   </div>`;
 
+  if(m.ingredients&&m.ingredients.length){
+    html+=`<div class="rulelabel">Gather these first</div><div class="mise">`+
+      m.ingredients.map(g=>`<button class="ming"><span class="mck">${IC.check}</span><span class="mtxt">${esc(g)}</span></button>`).join('')+`</div>`;
+  }
+
   if(m.uses&&m.uses.length){
     html+=`<div class="carry">${IC.arrowL}<div><div class="ch">USES FROM EARLIER</div>`+
       m.uses.map(u=>`<div class="ci">${esc(u.item)} <span class="cn">— ${esc(u.from)}</span></div>`).join('')+`</div></div>`;
@@ -541,6 +558,7 @@ function renderRecipe(){
     $('#beginat').textContent=fmtClock(ns.start);
     ns.steps.forEach((s,idx)=>{const el=document.querySelectorAll('#screen-recipe .step .clk')[idx];if(el)el.textContent=fmtClock(s.when);});
   });
+  $('#screen-recipe').querySelectorAll('.ming').forEach(b=>b.onclick=()=>b.classList.toggle('got'));
   $('#recipe-cta').innerHTML=`<button class="btn" id="startcook">${IC.play}Start cook-along</button>`;
   $('#startcook').onclick=()=>openCook(curMeal);
 }

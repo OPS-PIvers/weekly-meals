@@ -19,6 +19,7 @@
       "defaultServe": "18:00",
       "servesNote": "5–6",
       "blurb": "Low-and-slow thighs basted in garlic butter — an easy first smoker win.",
+      "ingredients": ["4 lb bone-in, skin-on chicken thighs", "4 tbsp butter", "3 cloves garlic", "1 tsp garlic powder + ½ tsp paprika", "1.5 lb baby potatoes", "1 lb green beans (keep ½ raw for Night 3)", "Olive oil, salt, pepper", "Wood chips or pellets for the smoker"],
       "uses": [],
       "saves": [
         { "item": "1¼ lb smoked chicken, shredded", "to": "Night 2 — Pesto Chicken Pasta" },
@@ -53,6 +54,7 @@
       "defaultServe": "18:00",
       "servesNote": "5–6",
       "blurb": "Last night’s smoked chicken tossed with pesto, broccoli, and angel hair.",
+      "ingredients": ["1¼ lb smoked chicken from Night 1", "12 oz angel hair pasta", "⅔ cup basil pesto", "½ cup grated parmesan, plus more to finish", "2 tbsp butter", "1 head broccoli", "1 cup frozen peas", "Salt and pepper"],
       "uses": [
         { "item": "1¼ lb smoked chicken, shredded", "from": "Night 1 — Smoked Chicken Thighs" }
       ],
@@ -86,6 +88,7 @@
       "defaultServe": "18:00",
       "servesNote": "5–6",
       "blurb": "Crispy-edged smash burgers with roasted green beans and baked beans.",
+      "ingredients": ["1.5 lb ground beef (80/20)", "6 brioche buns", "Sliced cheddar", "½ lb green beans from Night 1", "¼ cup garlic-parm butter from Night 2", "1 can baked beans", "Olive oil, salt, pepper", "Optional: brown-sugar BBQ sauce (check the label)"],
       "uses": [
         { "item": "½ lb green beans, raw", "from": "Night 1 — bag of green beans" },
         { "item": "¼ cup garlic-parmesan butter", "from": "Night 2 — Pesto Pasta" }
