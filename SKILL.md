@@ -68,13 +68,29 @@ Approval means a clear yes to the three meals (after any swaps). "Looks good," "
 
 Once approved, produce all of the following:
 
-1. **Recipes** — precise, with weights/volumes and step-by-step instructions. Each step that consumes wall-clock time gets a duration so the app's scheduler works (see schema). Flag any hands-off/hand-off step inline (e.g., "smoke 5 hr unattended").
+1. **Recipes** — precise, with weights/volumes and step-by-step instructions. Each step that consumes wall-clock time gets a duration so the app's scheduler works. **Author them prep-forward** and flag hands-off steps inline — see *Recipe authoring conventions* below.
 2. **Consolidated grocery list** — combined across the three meals, organized **by store section**, with quantities, and **on-hand items flagged** (don't make him re-buy staples).
-3. **Write `app/data/week.json`** — the only weekly-changing app file. Match the schema in `references/meal-plan-app-spec.md`.
+3. **Write `app/data/week.json`** — the only weekly-changing app file. It's `schemaVersion: 2`; mirror the current file's structure and the *Recipe authoring conventions* below (field list also in `DESIGN.md`).
 4. **Append the week to `references/meal-history.md`** — date + the three meals with their protein/method/flavor/effort.
 5. **Apply any newly confirmed preferences to `references/preferences.md`** — the yes/no answers from "novel items" above.
 
 Then commit and open the PR (see Persist).
+
+### Recipe authoring conventions (the app contract)
+
+`app/data/week.json` is `schemaVersion: 2` — mirror the structure of the current file. Each meal carries `cuisine`, `name`, `effort`, `activeMin`, `defaultServe`, `servesNote`, `blurb`, `ingredients[]`, `uses[]`, `saves[]`, `prep[]`, `cook[]`, `leftovers[]`. Each step is `{ t, det[], min, kid?, off?, timer? }`, where `min` is **wall-clock** minutes (a 2-hour smoke is `min: 120, off: true, timer: 120`); the scheduler sums every `min` to back-calculate the start time, so don't omit durations.
+
+**Prep-forward (mise en place) — author every meal this way.** Front-load the fiddly wash / trim / cut / measure / zest work so the active stretch is grab-and-go. This is a real executive-function win for Paul, not a flourish.
+
+- **Quick meals:** open with a single **`Prep everything first`** step that gets *all* ingredients ready (e.g. "shred the chicken, cut the broccoli into florets, measure the pesto and grate the parmesan"). The cook steps then just assemble.
+- **Long / smoker / oven meals:** don't dump all prep at the start. Prep what goes in first (e.g. season the meat), then place each remaining ingredient's prep as its **own step at the logical point right before it's used** — e.g. "prep the potatoes and green beans" lands in the cook sequence just before they go in the oven, not three hours early.
+- Spell out the real prep verbs per ingredient: "wash and trim the green beans", "scrub and halve the potatoes", "zest and quarter the lemons" — so he does it once and forgets it.
+
+**Per-meal gather list (`ingredients[]`).** A clean checklist of exactly what *that* meal uses, in **per-meal amounts** ("1 lb green beans", "1¼ lb smoked chicken from Night 1"). **No forward-carryover notes** ("keep ½ for Night 3") — those belong in `saves[]`, which the app surfaces separately. Backward references ("from Night 1") are fine; they tell him where to grab it.
+
+**Cross-meal hand-offs.** `uses[]` = what this meal takes from an earlier night; `saves[]` = what to set aside for a later night. Restate the hand-off inside the relevant step's `det` too. Keep per-meal amounts and the grocery total consistent with the split.
+
+**Grocery `items[]`.** `{ id, n, q, sec, store, p, staple?, warn?, note? }`. `sec` ∈ meat/produce/dairy/frozen/pantry; `store` ∈ the configured stores; `p` is an estimated price; mark one-time pantry buys `staple: true`; use `warn: true` + `note` only where a label genuinely needs checking (e.g. BBQ sauce for hidden apple). Quantities are summed across the three meals.
 
 ### Offer the app (don't auto-dump it)
 
@@ -82,7 +98,7 @@ After delivering the recipes and list, **offer** the app rather than forcing it:
 
 > "Want the phone view for this week? One tap and it's live."
 
-If yes, ensure `app/data/week.json` is written (it drives the app) and point Paul at the Pages URL. The app shell itself is built once and lives in `app/index.html` — **don't rebuild it weekly.** It's currently labeled **"provisional pending spec v2"**; until the spec is hardened (deferred work — see `references/meal-plan-app-spec.md`), treat the shell as provisional and don't invest in polishing it mid-plan.
+If yes, ensure `app/data/week.json` is written (it drives the app) and point Paul at the Pages URL: `https://ops-pivers.github.io/weekly-meals/app/`. The app shell (`app/index.html`) is **production and built once** — **don't rebuild it weekly.** Only `week.json` changes. The design is captured in `PRODUCT.md` and `DESIGN.md`; if Paul wants UI/UX changes, treat that as a separate app task (the `impeccable` skill is installed for it), not part of the weekly plan.
 
 ## Persist — commit + PR (the anti-drift gate)
 
@@ -117,6 +133,7 @@ Paul has ADHD-inattentive type — planning and working memory are the load-bear
 |------|------|---------|
 | `references/preferences.md` | Family profile, hard constraints, IN/OUT lists, effort tolerance | Occasionally, via PR, when a preference is confirmed |
 | `references/meal-history.md` | Rolling log of approved weeks | Every approved week, via PR |
-| `references/meal-plan-app-spec.md` | The app spec + data schema (currently ROUGH / v1) | Rarely; hardening to v2 is deferred |
-| `app/index.html` | The Pages app shell, built once | Rarely; provisional pending spec v2 |
-| `app/data/week.json` | The week's meals + grocery list | Every week — the only routine app change |
+| `PRODUCT.md` / `DESIGN.md` | App strategy + visual system ("Mise en place"), built with the `impeccable` skill | Only on app/UX changes |
+| `references/meal-plan-app-spec.md` | The original v1 spec — **superseded** by PRODUCT.md + DESIGN.md | Historical |
+| `app/index.html` | The Pages app (production), built once; renders `week.json` | Only on app/UX changes |
+| `app/data/week.json` | The week's meals + grocery list (`schemaVersion: 2`) | Every week — the only routine app change |
