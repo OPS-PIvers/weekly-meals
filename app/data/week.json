@@ -15,7 +15,7 @@
       "cuisine": "Smoker · American · Try something new",
       "name": "Smoked Garlic-Butter Chicken Thighs",
       "effort": "High",
-      "activeMin": 18,
+      "activeMin": 20,
       "defaultServe": "18:00",
       "servesNote": "5–6",
       "blurb": "Low-and-slow thighs basted in garlic butter — an easy first smoker win.",
@@ -36,8 +36,10 @@
       "cook": [
         { "t": "Smoke the thighs", "off": true, "timer": 120, "min": 120,
           "det": ["Lay thighs skin-up on the grate", "Baste once at the 1-hour mark", "Pull at 175°F internal (about 2 hours)", "Keep the lid closed — resist peeking"] },
-        { "t": "Roast potatoes and green beans", "off": true, "timer": 35, "min": 35,
-          "det": ["1.5 lb baby potatoes, halved, plus 1 lb green beans", "Toss with olive oil, salt, garlic powder", "425°F oven on a sheet pan", "Set ½ lb green beans aside raw for Night 3"] },
+        { "t": "Prep the potatoes and green beans", "kid": true, "min": 8,
+          "det": ["Scrub 1.5 lb baby potatoes and halve them", "Wash and trim 1 lb green beans", "Toss both with olive oil, salt, and garlic powder", "Spread on a sheet pan — now they’re ready to roast"] },
+        { "t": "Roast the potatoes and green beans", "off": true, "timer": 35, "min": 35,
+          "det": ["425°F oven", "Roast until the potatoes are tender and the beans blister"] },
         { "t": "Crisp the skin and rest", "timer": 10, "min": 10,
           "det": ["Skin-side over direct heat or under the broiler, 3–4 min", "Rest 5 min before serving"] },
         { "t": "Plate and stash leftovers", "kid": true, "min": 5,
@@ -50,7 +52,7 @@
       "cuisine": "Italian",
       "name": "Pesto Chicken & Broccoli Angel Hair",
       "effort": "Low",
-      "activeMin": 15,
+      "activeMin": 16,
       "defaultServe": "18:00",
       "servesNote": "5–6",
       "blurb": "Last night’s smoked chicken tossed with pesto, broccoli, and angel hair.",
@@ -62,18 +64,18 @@
         { "item": "¼ cup garlic-parmesan butter", "to": "Night 3 — buns & beans" }
       ],
       "prep": [
-        { "t": "Boil the pasta water", "min": 5,
-          "det": ["Big pot, well salted", "Bring to a rolling boil", "12 oz angel hair ready to go"] },
-        { "t": "Shred the smoked chicken", "kid": true, "min": 5,
-          "det": ["Pull last night’s 1¼ lb chicken into bite-size shreds", "Discard skin and bones"] }
+        { "t": "Prep everything first", "kid": true, "min": 8,
+          "det": ["Shred 1¼ lb smoked chicken (from last night) into bite-size pieces", "Cut 1 head broccoli into florets", "Measure ⅔ cup pesto and grate ½ cup parmesan", "Set out 1 cup peas and 2 tbsp butter — now just grab as you go"] },
+        { "t": "Get the pasta water boiling", "min": 4,
+          "det": ["Big pot, well salted", "Bring to a rolling boil", "Have the 12 oz angel hair ready"] }
       ],
       "cook": [
         { "t": "Cook the angel hair", "off": true, "timer": 5, "min": 5,
           "det": ["Add pasta to the boiling water", "Cook 4–5 min to al dente", "Reserve ½ cup pasta water, then drain"] },
         { "t": "Steam the broccoli and peas", "off": true, "timer": 6, "min": 6,
-          "det": ["1 head broccoli, cut into florets", "1 cup frozen peas", "Steam until just tender"] },
+          "det": ["Steam the broccoli florets and peas until just tender"] },
         { "t": "Toss it all together", "min": 6,
-          "det": ["Pasta + ⅔ cup pesto + the shredded chicken", "Splash of pasta water + 2 tbsp butter", "½ cup grated parmesan", "Set aside ¼ cup garlic-parm butter for Night 3"] },
+          "det": ["Pasta + the pesto + the shredded chicken", "Splash of pasta water + the butter", "Stir in the parmesan", "Set aside ¼ cup garlic-parm butter for Night 3"] },
         { "t": "Plate", "kid": true, "min": 3,
           "det": ["Top with broccoli, peas, and more parmesan", "A crack of black pepper"] }
       ],
@@ -95,10 +97,8 @@
       ],
       "saves": [],
       "prep": [
-        { "t": "Form the patty balls", "kid": true, "min": 6,
-          "det": ["1.5 lb ground beef (80/20)", "Loosely form 6 balls — don’t pack them", "Salt right before they hit the pan"] },
-        { "t": "Toss the green beans", "kid": true, "min": 5,
-          "det": ["½ lb green beans from Night 1", "Garlic-parm butter from Night 2 + a little olive oil", "Spread on a sheet pan"] }
+        { "t": "Prep everything first", "kid": true, "min": 9,
+          "det": ["Loosely form 1.5 lb ground beef into 6 balls — don’t pack them (salt just before they hit the pan)", "Wash and trim ½ lb green beans, toss with the garlic-parm butter + a little oil on a sheet pan", "Open the can of baked beans", "Set out the cheddar, buns, and BBQ sauce — now it’s all grab-and-go"] }
       ],
       "cook": [
         { "t": "Roast the green beans", "off": true, "timer": 18, "min": 18,
