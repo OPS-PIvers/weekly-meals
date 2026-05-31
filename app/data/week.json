@@ -19,7 +19,7 @@
       "defaultServe": "18:00",
       "servesNote": "5–6",
       "blurb": "Low-and-slow thighs basted in garlic butter — an easy first smoker win.",
-      "ingredients": ["4 lb bone-in, skin-on chicken thighs", "4 tbsp butter", "3 cloves garlic", "1 tsp garlic powder + ½ tsp paprika", "1.5 lb baby potatoes", "1 lb green beans (keep ½ raw for Night 3)", "Olive oil, salt, pepper", "Wood chips or pellets for the smoker"],
+      "ingredients": ["4 lb bone-in, skin-on chicken thighs", "4 tbsp butter", "3 cloves garlic", "1 tsp garlic powder + ½ tsp paprika", "1.5 lb baby potatoes", "1 lb green beans", "Olive oil, salt, pepper", "Wood chips or pellets for the smoker"],
       "uses": [],
       "saves": [
         { "item": "1¼ lb smoked chicken, shredded", "to": "Night 2 — Pesto Chicken Pasta" },
@@ -116,7 +116,7 @@
   "items": [
     { "id": "thighs",     "n": "Bone-in, skin-on chicken thighs", "q": "4 lb",          "sec": "meat",    "store": "lunds",  "p": 15.96, "note": "Smoke Night 1; shred 1¼ lb for Night 2" },
     { "id": "beef",       "n": "Ground beef (80/20)",             "q": "1.5 lb",        "sec": "meat",    "store": "lunds",  "p": 9.74 },
-    { "id": "gbeans",     "n": "Green beans",                     "q": "1.5 lb",        "sec": "produce", "store": "tj",     "p": 3.99,  "note": "½ roast Night 1, ½ roast Night 3" },
+    { "id": "gbeans",     "n": "Green beans",                     "q": "1.5 lb",        "sec": "produce", "store": "tj",     "p": 3.99,  "note": "1 lb roast Night 1, ½ lb roast Night 3" },
     { "id": "potatoes",   "n": "Baby potatoes",                   "q": "1.5 lb",        "sec": "produce", "store": "tj",     "p": 3.49 },
     { "id": "broccoli",   "n": "Broccoli",                        "q": "1 head",        "sec": "produce", "store": "tj",     "p": 2.49 },
     { "id": "garlic",     "n": "Garlic",                          "q": "1 head",        "sec": "produce", "store": "tj",     "p": 0.79 },
