@@ -38,4 +38,26 @@ app/data/week.json                the week's meals + grocery list, schemaVersion
 - **This Week** — the three nights as an editorial list (no cards), with cross-meal hand-off tags and an unmissable apple-allergy strip.
 - **Recipe** — stats strip, a serve-time scheduler that back-calculates "begin your first step at …", prep-then-cook step rows each showing their clock time, and carryover notes.
 - **Cook-along** — full-screen, one step at a time, progress bar, and countdown timers on wait steps that beep + vibrate at zero.
-- **Shopping** — grouped by store then section, with running subtotals/grand total, check vs. "have it", a pantry-staples master toggle, and store reassignment.
+- **Shopping** — grouped by store then section, with running subtotals/grand total, check vs. "have it", a pantry-staples master toggle, store reassignment, and **Export for LifeBalance**.
+
+## Export for LifeBalance
+
+The Shopping summary has an **Export for LifeBalance** row with two actions:
+
+- **Copy for LifeBalance** — one-tap copy of the week as JSON to the clipboard (great on mobile; falls back to a hidden-textarea copy if the Clipboard API is blocked).
+- **Download** — saves the same JSON as `week-export.json`.
+
+Both emit the current week as **`schemaVersion: 2`** JSON — the same shape as `app/data/week.json` — built from the in-memory plan, so live store reassignments are honored. Shopping progress (have / checked) is *not* part of the plan and is omitted.
+
+The output matches the LifeBalance import contract exactly:
+
+```
+{ schemaVersion: 2, weekOf, weekLabel, subtitle, stores, storeOrder, meals, items }
+```
+
+- **`weekOf`** — the **Monday** of the week, `YYYY-MM-DD` (the export snaps a non-Monday source date forward to the Monday on-or-after). `meals[]` order *is* the cook/day order: `meals[0]` is cooked on `weekOf`, `meals[1]` the next day, and so on.
+- **`stores`** — keyed object `{ [key]: { name, why? } }`; **`storeOrder`** lists those keys.
+- **`meals[]`** — each `{ name, cuisine, effort, activeMin, defaultServe (24-hour "HH:MM"), servesNote, blurb, ingredients[], prep[], cook[], uses[{item,from}], saves[{item,to}], leftovers[] }`. Each prep/cook step is `{ t, min (wall-clock minutes, incl. hands-off), det[], kid?, off?, timer? }`.
+- **`items[]`** — the consolidated, **deduped** grocery list (the single source of truth for shopping, *not* per-meal `ingredients`). Each `{ n, q, sec, store, p, note?, warn?, staple? }`; `sec` ∈ {meat, produce, dairy, frozen, pantry}; every `store` is a key that exists in `stores`.
+
+Before writing/copying, the exporter verifies these invariants and **blocks with a message** if any fail: `weekOf` is a Monday; every meal has a name; every `defaultServe` is 24-hour `HH:MM`; every `step.min` is positive wall-clock minutes; every `items[].store` exists in `stores`; the item list is deduped; `schemaVersion` is 2.

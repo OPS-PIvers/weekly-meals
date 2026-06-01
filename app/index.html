@@ -241,6 +241,16 @@ input{font:inherit}
 .staple-toggle .lbl{font-size:0.9375rem;font-weight:600;color:var(--ink)}
 .staple-toggle .sub{font-size:0.8125rem;color:var(--muted);font-weight:500}
 
+/* export for LifeBalance */
+.export-row{display:flex;gap:10px;margin-top:12px}
+.export-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:0.875rem;font-weight:600;
+  color:var(--primary-strong);background:var(--primary-wash);border:1px solid var(--primary-line);border-radius:13px;
+  padding:11px 12px;min-height:46px;transition:filter .15s var(--ease),transform .12s var(--ease),background .15s var(--ease),color .15s var(--ease)}
+.export-btn.ghost{background:var(--surface);border-color:var(--line-2);color:var(--muted)}
+.export-btn:active{transform:translateY(1px);filter:brightness(.97)}
+.export-btn svg{width:17px;height:17px;flex:none}
+.export-btn.ok{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+
 .store{margin-top:30px}
 .store-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line-2)}
 .store-head .sname{font-size:1.375rem;font-weight:500;letter-spacing:-0.01em}
@@ -384,6 +394,8 @@ const IC = {
   box:   I('<path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/>'),
   moon:  I('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>'),
   sun:   I('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+  copy:  I('<rect x="9" y="9" width="11" height="11" rx="2.2"/><path d="M5 15H4a1.8 1.8 0 0 1-1.8-1.8V4A1.8 1.8 0 0 1 4 2.2h9.2A1.8 1.8 0 0 1 15 4v1"/>'),
+  down:  I('<path d="M12 3v12"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M4.5 21h15"/>'),
 };
 
 /* ===================================================== Theme */
@@ -688,6 +700,10 @@ function renderShopping(){
       <span><span class="lbl">I already have my pantry staples</span><br>
       <span class="sub">${stOn?'Marked as owned — dropped from the total':'Drops oil, butter, spices & more'}</span></span>
     </button>
+    <div class="export-row">
+      <button class="export-btn" id="exp-copy" aria-label="Copy this week as LifeBalance JSON">${IC.copy}Copy for LifeBalance</button>
+      <button class="export-btn ghost" id="exp-dl" aria-label="Download this week as week-export.json">${IC.down}Download</button>
+    </div>
   </div>`;
 
   DATA.storeOrder.forEach(store=>{
@@ -708,6 +724,8 @@ function renderShopping(){
 
   $('#staples').onclick=toggleStaples;
   $('#reset').onclick=resetChecks;
+  $('#exp-copy').onclick=function(){copyExport(this);};
+  $('#exp-dl').onclick=function(){downloadExport(this);};
   $('#screen-shopping').querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{const s=STATE.items[b.dataset.check];s.checked=!s.checked;save();renderShopping();});
   $('#screen-shopping').querySelectorAll('[data-have]').forEach(b=>b.onclick=()=>{const s=STATE.items[b.dataset.have];s.have=!s.have;if(s.have)s.checked=false;save();renderShopping();});
   $('#screen-shopping').querySelectorAll('[data-move]').forEach(b=>b.onclick=()=>openSheet(b.dataset.move));
@@ -735,6 +753,147 @@ function toggleStaples(){
 function resetChecks(){
   DATA.items.forEach(i=>{STATE.items[i.id].checked=false;STATE.items[i.id].have=false;});
   STATE.pantryOn=false;save();renderShopping();
+}
+
+/* ===================================================== Export for LifeBalance
+   Re-emits the current week as schemaVersion-2 JSON matching the LifeBalance
+   import contract (see README "Export for LifeBalance"). Source of truth is the
+   in-memory DATA loaded from week.json; live store reassignments from STATE are
+   honored. Shopping progress (have/checked) is NOT part of the plan and is omitted. */
+function nextMonday(ds){
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(ds||'');
+  if(!m)return ds;
+  const dt=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
+  const iso=dt.getUTCDay()||7;            // Mon=1 … Sun=7
+  dt.setUTCDate(dt.getUTCDate()+((8-iso)%7)); // snap forward to Monday-on-or-after
+  return dt.toISOString().slice(0,10);
+}
+function isMonday(ds){
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(ds||'');
+  if(!m)return false;
+  return new Date(Date.UTC(+m[1],+m[2]-1,+m[3])).getUTCDay()===1;
+}
+function stepOut(s){
+  const o={t:s.t, min:s.min};
+  o.det=Array.isArray(s.det)?[...s.det]:[];
+  if(s.kid)o.kid=true;
+  if(s.off)o.off=true;
+  if(s.timer!=null)o.timer=s.timer;
+  return o;
+}
+function buildExportData(){
+  const d=DATA;
+  const out={
+    schemaVersion:2,
+    weekOf:nextMonday(d.weekOf),
+    weekLabel:d.weekLabel||'',
+    subtitle:d.subtitle||'',
+    stores:{},
+    storeOrder:[...(d.storeOrder||[])],
+    meals:[],
+    items:[]
+  };
+  out.storeOrder.forEach(k=>{
+    const s=d.stores&&d.stores[k]; if(!s)return;
+    const o={name:s.name};
+    if(s.why!=null&&s.why!=='')o.why=s.why;
+    out.stores[k]=o;
+  });
+  out.meals=(d.meals||[]).map(m=>{
+    const mo={name:m.name};
+    if(m.cuisine!=null)mo.cuisine=m.cuisine;
+    if(m.effort!=null)mo.effort=m.effort;
+    if(m.activeMin!=null)mo.activeMin=m.activeMin;
+    if(m.defaultServe!=null)mo.defaultServe=m.defaultServe;
+    if(m.servesNote!=null)mo.servesNote=m.servesNote;
+    if(m.blurb!=null)mo.blurb=m.blurb;
+    mo.ingredients=Array.isArray(m.ingredients)?[...m.ingredients]:[];
+    mo.prep=(m.prep||[]).map(stepOut);
+    mo.cook=(m.cook||[]).map(stepOut);
+    mo.uses=(m.uses||[]).map(u=>({item:u.item, from:u.from}));
+    mo.saves=(m.saves||[]).map(s=>({item:s.item, to:s.to}));
+    mo.leftovers=Array.isArray(m.leftovers)?[...m.leftovers]:[];
+    return mo;
+  });
+  out.items=(d.items||[]).map(it=>{
+    const live=STATE&&STATE.items&&STATE.items[it.id];
+    const io={n:it.n};
+    if(it.q!=null)io.q=it.q;
+    if(it.sec!=null)io.sec=it.sec;
+    io.store=(live&&live.store)||it.store;
+    if(typeof it.p==='number')io.p=it.p;
+    if(it.note!=null)io.note=it.note;
+    if(it.warn)io.warn=true;
+    if(it.staple)io.staple=true;
+    return io;
+  });
+  return out;
+}
+function validateExport(x){
+  const e=[];
+  if(x.schemaVersion!==2)e.push('schemaVersion must be 2');
+  if(!isMonday(x.weekOf))e.push('weekOf "'+x.weekOf+'" is not a Monday');
+  const keys=new Set(Object.keys(x.stores||{}));
+  (x.storeOrder||[]).forEach(k=>{if(!keys.has(k))e.push('storeOrder key "'+k+'" missing from stores');});
+  const hhmm=/^([01]\d|2[0-3]):[0-5]\d$/;
+  (x.meals||[]).forEach((m,i)=>{
+    if(!m.name)e.push('meal '+(i+1)+' has no name');
+    if(m.defaultServe!=null&&!hhmm.test(m.defaultServe))e.push('meal '+(i+1)+' defaultServe "'+m.defaultServe+'" is not 24-hour HH:MM');
+    [...(m.prep||[]),...(m.cook||[])].forEach((s,j)=>{
+      if(!s.t)e.push('meal '+(i+1)+' step '+(j+1)+' is missing a title');
+      if(typeof s.min!=='number'||!(s.min>0))e.push('meal '+(i+1)+' step "'+(s.t||(j+1))+'" min is not positive wall-clock minutes');
+    });
+  });
+  const seen=new Set();
+  (x.items||[]).forEach((it,i)=>{
+    if(!it.n)e.push('item '+(i+1)+' is missing a name');
+    if(!keys.has(it.store))e.push('item "'+(it.n||(i+1))+'" store "'+it.store+'" is not a key in stores');
+    const k=String(it.n||'').trim().toLowerCase();
+    if(seen.has(k))e.push('duplicate grocery item "'+it.n+'" — list must be deduped');
+    seen.add(k);
+  });
+  return e;
+}
+function exportJSON(){
+  const x=buildExportData();
+  const errs=validateExport(x);
+  if(errs.length){alert('Export blocked — fix these first:\n\n• '+errs.join('\n• '));return null;}
+  return JSON.stringify(x,null,2);
+}
+function legacyCopy(text){
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.top='0';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,text.length);
+    const ok=document.execCommand('copy');ta.remove();return ok;
+  }catch(e){return false;}
+}
+function flashBtn(btn,msg,ok){
+  if(!btn)return;
+  const html=btn.dataset.html||(btn.dataset.html=btn.innerHTML);
+  btn.innerHTML=(ok?IC.check:IC.alert)+msg;
+  btn.classList.toggle('ok',!!ok);
+  clearTimeout(btn._t);
+  btn._t=setTimeout(()=>{btn.innerHTML=html;btn.classList.remove('ok');},1700);
+}
+async function copyExport(btn){
+  const json=exportJSON();if(json==null)return;
+  let ok=false;
+  try{await navigator.clipboard.writeText(json);ok=true;}
+  catch(e){ok=legacyCopy(json);}
+  flashBtn(btn,ok?'Copied!':'Press & hold to copy',ok);
+}
+function downloadExport(btn){
+  const json=exportJSON();if(json==null)return;
+  try{
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='week-export.json';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    flashBtn(btn,'Saved',true);
+  }catch(e){flashBtn(btn,'Download failed',false);}
 }
 
 /* ===================================================== Store reassign sheet */
