@@ -799,7 +799,7 @@ function buildExportData(){
     if(s.why!=null&&s.why!=='')o.why=s.why;
     out.stores[k]=o;
   });
-  out.meals=(d.meals||[]).map(m=>{
+  out.meals=(d.meals||[]).filter(Boolean).map(m=>{
     const mo={name:m.name};
     if(m.cuisine!=null)mo.cuisine=m.cuisine;
     if(m.effort!=null)mo.effort=m.effort;
@@ -808,14 +808,14 @@ function buildExportData(){
     if(m.servesNote!=null)mo.servesNote=m.servesNote;
     if(m.blurb!=null)mo.blurb=m.blurb;
     mo.ingredients=Array.isArray(m.ingredients)?[...m.ingredients]:[];
-    mo.prep=(m.prep||[]).map(stepOut);
-    mo.cook=(m.cook||[]).map(stepOut);
-    mo.uses=(m.uses||[]).map(u=>({item:u.item, from:u.from}));
-    mo.saves=(m.saves||[]).map(s=>({item:s.item, to:s.to}));
+    mo.prep=(m.prep||[]).filter(Boolean).map(stepOut);
+    mo.cook=(m.cook||[]).filter(Boolean).map(stepOut);
+    mo.uses=(m.uses||[]).filter(Boolean).map(u=>({item:u.item, from:u.from}));
+    mo.saves=(m.saves||[]).filter(Boolean).map(s=>({item:s.item, to:s.to}));
     mo.leftovers=Array.isArray(m.leftovers)?[...m.leftovers]:[];
     return mo;
   });
-  out.items=(d.items||[]).map(it=>{
+  out.items=(d.items||[]).filter(Boolean).map(it=>{
     const live=STATE&&STATE.items&&STATE.items[it.id];
     const io={n:it.n};
     if(it.q!=null)io.q=it.q;
@@ -863,7 +863,7 @@ function exportJSON(){
 function legacyCopy(text){
   try{
     const ta=document.createElement('textarea');
-    ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.top='0';ta.style.opacity='0';
+    ta.value=text;ta.setAttribute('readonly','');ta.style.position='absolute';ta.style.left='-9999px';ta.style.top='0';
     document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,text.length);
     const ok=document.execCommand('copy');ta.remove();return ok;
   }catch(e){return false;}
