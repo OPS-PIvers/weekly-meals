@@ -70,7 +70,7 @@
         { "item": "2 ears sweet corn, raw", "from": "Night 1 — bag of corn" }
       ],
       "saves": [
-        { "item": "½ red onion", "to": "Night 3 — Salmon sheet pan" }
+        { "item": "½ red onion", "to": "Night 3 — Crispy Chicken Thighs" }
       ],
       "prep": [
         { "t": "Prep everything first", "kid": true, "min": 10,
