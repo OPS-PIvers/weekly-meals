@@ -6,6 +6,14 @@
 
 ---
 
+## Week of 2026-08-03
+
+1. **Smoked Pulled Pork Sandwiches** — Pork · Smoker · Sweet-and-savory BBQ · *High* (Paul's own recipe: 3 lb untrimmed boneless butt, mustard binder, wrap at 160°F, pull at 195–205°F)
+2. **Pulled Pork & Charred Corn Quesadillas** — Pork · Griddle · Tex-Mex chili-lime · *Low* (uses Night 1's unsauced pork + 2 ears of corn)
+3. **Crispy Lemon-Herb Chicken Thighs** — Chicken · Skillet-to-oven · Mediterranean lemon-herb · *Med* (uses Night 2's half red onion)
+
+> Overlap: one shoulder feeds Nights 1 & 2; one bag of corn splits across Nights 1 & 2; one red onion splits across Nights 2 & 3. Smoke wood is cherry/hickory/pecan. Night 3 was proposed as salmon and vetoed — fish is now on the OUT list.
+
 ## Week of 2026-06-06
 
 1. **Smoked Garlic-Butter Chicken Thighs** — Chicken · Smoker · Garlic-butter American · *High* (try-something-new smoker cook; big batch shredded into Night 2)

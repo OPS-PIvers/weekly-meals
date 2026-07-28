@@ -1,7 +1,7 @@
 {
-  "weekOf": "2026-06-08",
-  "weekLabel": "Week of June 8, 2026",
-  "subtitle": "Three dinners, planned together. Cook them in order so the fresh food carries from one night to the next.",
+  "weekOf": "2026-08-03",
+  "weekLabel": "Week of August 3, 2026",
+  "subtitle": "One long smoke up front, then two fast nights that live off it. Cook them in order so the pork and the corn carry forward.",
   "schemaVersion": 2,
   "stores": {
     "lunds":  { "name": "Lund’s & Byerly’s", "why": "Best meat counter" },
@@ -11,128 +11,150 @@
   "storeOrder": ["lunds", "tj", "target"],
   "meals": [
     {
-      "id": "smoked-gb-chicken",
-      "cuisine": "Smoker · American · Try something new",
-      "name": "Smoked Garlic-Butter Chicken Thighs",
+      "id": "smoked-pulled-pork",
+      "cuisine": "Smoker · American BBQ",
+      "name": "Smoked Pulled Pork Sandwiches",
       "effort": "High",
-      "activeMin": 20,
+      "activeMin": 35,
       "defaultServe": "18:00",
       "servesNote": "5–6",
-      "blurb": "Low-and-slow thighs basted in garlic butter — an easy first smoker win.",
-      "ingredients": ["4 lb bone-in, skin-on chicken thighs", "4 tbsp butter", "3 cloves garlic", "1 tsp garlic powder + ½ tsp paprika", "1.5 lb baby potatoes", "1 lb green beans", "Olive oil, salt, pepper", "Wood chips or pellets for the smoker"],
+      "blurb": "A 3 lb shoulder, sweet-and-savory rub, no twine — smoked to probe-tender and pulled into brioche buns.",
+      "ingredients": ["3 lb untrimmed boneless pork shoulder (butt)", "2 tbsp yellow mustard (binder only — it won’t taste like mustard)", "¼ cup packed brown sugar", "2 tbsp sweet paprika", "1 tbsp kosher salt", "2 tsp garlic powder", "1½ tsp onion powder", "1 tsp coarse black pepper", "1 tsp mustard powder", "Heavy-duty aluminum foil", "6 brioche buns", "1 can baked beans", "3 ears sweet corn", "2 tbsp butter", "Sweet Baby Ray’s BBQ sauce", "Wood chips or pellets — cherry, hickory, or pecan"],
       "uses": [],
       "saves": [
-        { "item": "1¼ lb smoked chicken, shredded", "to": "Night 2 — Pesto Chicken Pasta" },
-        { "item": "½ lb green beans, raw", "to": "Night 3 — Smash Burgers" }
+        { "item": "1 lb pulled pork, unsauced", "to": "Night 2 — Pulled Pork Quesadillas" },
+        { "item": "2 ears sweet corn, raw", "to": "Night 2 — charred corn filling" }
       ],
       "prep": [
-        { "t": "Make the garlic-butter baste", "kid": true, "min": 6,
-          "det": ["4 tbsp butter, melted", "3 cloves garlic, grated", "1 tsp garlic powder + ½ tsp paprika", "Pinch of salt and pepper", "Whisk smooth"] },
-        { "t": "Pat dry and coat the thighs", "min": 6,
-          "det": ["4 lb bone-in, skin-on chicken thighs", "Pat very dry with paper towel", "Brush all over with the garlic butter", "Keep half the butter back for basting"] },
-        { "t": "Fire up the smoker", "off": true, "timer": 15, "min": 15,
-          "det": ["Set the smoker to 250°F", "Add a small handful of wood chips or pellets", "Let it settle at temp before the chicken goes on"] }
+        { "t": "Mix the rub", "kid": true, "min": 5,
+          "det": ["¼ cup packed brown sugar", "2 tbsp sweet paprika", "1 tbsp kosher salt", "2 tsp garlic powder + 1½ tsp onion powder", "1 tsp coarse black pepper + 1 tsp mustard powder", "Stir it all together, breaking up any brown-sugar clumps"] },
+        { "t": "Trim, slather, and rub the shoulder", "min": 12,
+          "det": ["Trim off loose, thin, dangling meat and stray fat strings so they don’t burn", "Leave the main ¼-inch fat cap intact", "Pat the whole roast dry with paper towels", "Slather every surface with 2 tbsp yellow mustard", "Coat all sides generously with the rub and press it in with your hands"] },
+        { "t": "Fire up the smoker", "off": true, "timer": 25, "min": 25,
+          "det": ["Set the smoker to 225–250°F", "Add cherry, hickory, or pecan wood chips or pellets", "Let it settle at temp before the pork goes on"] }
       ],
       "cook": [
-        { "t": "Smoke the thighs", "off": true, "timer": 120, "min": 120,
-          "det": ["Lay thighs skin-up on the grate", "Baste once at the 1-hour mark", "Pull at 175°F internal (about 2 hours)", "Keep the lid closed — resist peeking"] },
-        { "t": "Prep the potatoes and green beans", "kid": true, "min": 8,
-          "det": ["Scrub 1.5 lb baby potatoes and halve them", "Wash and trim 1 lb green beans", "Toss both with olive oil, salt, and garlic powder", "Spread on a sheet pan — now they’re ready to roast"] },
-        { "t": "Roast the potatoes and green beans", "off": true, "timer": 35, "min": 35,
-          "det": ["425°F oven", "Roast until the potatoes are tender and the beans blister"] },
-        { "t": "Crisp the skin and rest", "timer": 10, "min": 10,
-          "det": ["Skin-side over direct heat or under the broiler, 3–4 min", "Rest 5 min before serving"] },
-        { "t": "Plate and stash leftovers", "kid": true, "min": 5,
-          "det": ["Serve 4 thighs with potatoes and beans", "Shred about 1¼ lb of the rest for tomorrow’s pasta"] }
+        { "t": "Tuck the roast and get it on", "min": 5,
+          "det": ["Gather the loose flaps of the boneless cut and tuck them tightly underneath", "Set it straight on the grate, fat-side up — no twine needed", "Gravity holds it together as the meat shrinks and tightens", "Close the lid"] },
+        { "t": "The bark phase — smoke undisturbed", "off": true, "timer": 195, "min": 195,
+          "det": ["3 to 3½ hours at 225–250°F", "Don’t peek, don’t spritz, don’t open the lid", "You’re looking for ~160°F internal and a dark, firmly set crust"] },
+        { "t": "Wrap it tight", "min": 8,
+          "det": ["Lay out a double layer of heavy-duty foil", "Transfer the shoulder onto it, tucked flaps still underneath", "Wrap as tightly as you can to trap the steam and juices", "Back into the smoker"] },
+        { "t": "The stall phase — cook to probe-tender", "off": true, "timer": 120, "min": 120,
+          "det": ["Another 1½ to 2½ hours wrapped", "Watch it with the remote digital thermometer", "Done at 195–205°F in the thickest part", "The real test: the probe slides into the center with zero resistance"] },
+        { "t": "Rest — still wrapped", "off": true, "timer": 40, "min": 40,
+          "det": ["Pull it off the smoker and leave it in the foil", "Rest on the counter 30–45 min", "This is what keeps the juices in the meat instead of on the board"] },
+        { "t": "Prep the corn and beans", "kid": true, "min": 8,
+          "det": ["Shuck 3 ears of sweet corn and rub them with butter, salt, and pepper", "Set the other 2 ears aside raw, still in the husk, for tomorrow", "Open the can of baked beans into a small pot", "Set out the buns and the BBQ sauce"] },
+        { "t": "Roast the corn and warm the beans", "off": true, "timer": 20, "min": 20,
+          "det": ["Corn at 425°F in the oven (or back on the smoker), turning once, about 20 min", "Baked beans on low, stirring now and then"] },
+        { "t": "Unwrap, shred, and sauce", "min": 12,
+          "det": ["Unwrap carefully over a pan — save every drop of the liquid pork juice", "Pull the meat apart with two forks, discarding big chunks of unrendered fat", "Pour the saved juices back over the shredded pork to rehydrate it", "Set aside 1 lb of the pork UNSAUCED for tomorrow", "Toss the rest with Sweet Baby Ray’s to taste"] },
+        { "t": "Build the sandwiches", "kid": true, "min": 5,
+          "det": ["Pile the sauced pork onto brioche buns", "Serve with the roasted corn and baked beans"] }
       ],
-      "leftovers": ["Fridge the shredded chicken up to 4 days.", "Lunch: chicken and potatoes, reheated.", "Remember: ½ lb green beans stays raw for Night 3."]
+      "leftovers": ["Fridge the sauced pork up to 4 days; it reheats best with a splash of water.", "Lunch: pork over rice, or a second sandwich.", "Remember: 1 lb stays unsauced and 2 ears of corn stay raw for Night 2."]
     },
     {
-      "id": "pesto-chicken-pasta",
-      "cuisine": "Italian",
-      "name": "Pesto Chicken & Broccoli Angel Hair",
+      "id": "pulled-pork-quesadillas",
+      "cuisine": "Tex-Mex",
+      "name": "Pulled Pork & Charred Corn Quesadillas",
       "effort": "Low",
-      "activeMin": 16,
+      "activeMin": 15,
       "defaultServe": "18:00",
       "servesNote": "5–6",
-      "blurb": "Last night’s smoked chicken tossed with pesto, broccoli, and angel hair.",
-      "ingredients": ["1¼ lb smoked chicken from Night 1", "12 oz angel hair pasta", "⅔ cup basil pesto", "½ cup grated parmesan, plus more to finish", "2 tbsp butter", "1 head broccoli", "1 cup frozen peas", "Salt and pepper"],
+      "blurb": "Last night’s pork, re-seasoned bright with chili and lime — crisped in a pan with charred corn and black beans.",
+      "ingredients": ["1 lb pulled pork from Night 1", "2 ears sweet corn from Night 1", "8 large flour tortillas", "2 cups shredded Monterey Jack & cheddar", "1 can black beans", "½ red onion", "1 small bunch cilantro", "2 limes", "½ cup sour cream", "1 tsp chili powder", "½ tsp cumin", "Olive oil, salt, pepper"],
       "uses": [
-        { "item": "1¼ lb smoked chicken, shredded", "from": "Night 1 — Smoked Chicken Thighs" }
+        { "item": "1 lb pulled pork, unsauced", "from": "Night 1 — Smoked Pulled Pork" },
+        { "item": "2 ears sweet corn, raw", "from": "Night 1 — bag of corn" }
       ],
       "saves": [
-        { "item": "¼ cup garlic-parmesan butter", "to": "Night 3 — buns & beans" }
+        { "item": "½ red onion", "to": "Night 3 — Crispy Chicken Thighs" }
       ],
       "prep": [
-        { "t": "Prep everything first", "kid": true, "min": 8,
-          "det": ["Shred 1¼ lb smoked chicken (from last night) into bite-size pieces", "Cut 1 head broccoli into florets", "Measure ⅔ cup pesto and grate ½ cup parmesan", "Set out 1 cup peas and 2 tbsp butter — now just grab as you go"] },
-        { "t": "Get the pasta water boiling", "min": 4,
-          "det": ["Big pot, well salted", "Bring to a rolling boil", "Have the 12 oz angel hair ready"] }
+        { "t": "Prep everything first", "kid": true, "min": 10,
+          "det": ["Shuck the 2 ears of corn and cut the kernels off into a bowl", "Dice ½ red onion — put the other half in the fridge for tomorrow", "Chop the cilantro (stems and all)", "Drain and rinse the can of black beans", "Zest and juice 1 lime; cut the second into wedges", "Stir the lime crema: ½ cup sour cream + the lime zest + a squeeze of juice + pinch of salt", "Toss the 1 lb pulled pork with 1 tsp chili powder, ½ tsp cumin, and the rest of the lime juice", "Now it’s all grab-and-go"] }
       ],
       "cook": [
-        { "t": "Cook the angel hair", "off": true, "timer": 5, "min": 5,
-          "det": ["Add pasta to the boiling water", "Cook 4–5 min to al dente", "Reserve ½ cup pasta water, then drain"] },
-        { "t": "Steam the broccoli and peas", "off": true, "timer": 6, "min": 6,
-          "det": ["Steam the broccoli florets and peas until just tender"] },
-        { "t": "Toss it all together", "min": 6,
-          "det": ["Pasta + the pesto + the shredded chicken", "Splash of pasta water + the butter", "Stir in the parmesan", "Set aside ¼ cup garlic-parm butter for Night 3"] },
-        { "t": "Plate", "kid": true, "min": 3,
-          "det": ["Top with broccoli, peas, and more parmesan", "A crack of black pepper"] }
+        { "t": "Char the corn and onion", "min": 6,
+          "det": ["Hot dry skillet, a little olive oil", "Corn kernels and diced onion, undisturbed 2 min, then toss", "Cook until the kernels have real black spots", "Stir in the black beans and half the cilantro, then tip it all into a bowl"] },
+        { "t": "Warm the pork through", "min": 4,
+          "det": ["Same pan, medium heat", "The seasoned pork, 3–4 min, until hot and a little crispy at the edges"] },
+        { "t": "Griddle the quesadillas", "timer": 14, "min": 14,
+          "det": ["Tortilla in the pan, cheese on half, then pork, then the corn-bean mix, then more cheese", "Fold over and press flat", "2–3 min a side until deep golden and the cheese has set", "Work in batches — 4 quesadillas total"] },
+        { "t": "Cut and plate", "kid": true, "min": 4,
+          "det": ["Cut each into thirds", "Top with the rest of the cilantro", "Lime crema and lime wedges on the side"] }
       ],
-      "leftovers": ["Fridge up to 4 days.", "Reheat with a splash of water or milk.", "Great cold-prepped lunch bowls."]
+      "leftovers": ["Fridge up to 3 days.", "Reheat in a dry pan, not the microwave — the tortilla goes soft otherwise.", "Lunch: cut cold into wedges with the leftover crema."]
     },
     {
-      "id": "gb-smash-burgers",
-      "cuisine": "American",
-      "name": "Garlic-Butter Smash Burgers",
+      "id": "crispy-lemon-herb-chicken",
+      "cuisine": "Mediterranean",
+      "name": "Crispy Lemon-Herb Chicken Thighs",
       "effort": "Med",
       "activeMin": 18,
       "defaultServe": "18:00",
       "servesNote": "5–6",
-      "blurb": "Crispy-edged smash burgers with roasted green beans and baked beans.",
-      "ingredients": ["1.5 lb ground beef (80/20)", "6 brioche buns", "Sliced cheddar", "½ lb green beans from Night 1", "¼ cup garlic-parm butter from Night 2", "1 can baked beans", "Olive oil, salt, pepper", "Optional: brown-sugar BBQ sauce (check the label)"],
+      "blurb": "Skin-shattering skillet-to-oven thighs with roasted asparagus and lemon-garlic parmesan orzo.",
+      "ingredients": ["2½ lb bone-in, skin-on chicken thighs (6)", "1 lb asparagus", "½ red onion from Night 2", "2 lemons", "4 tbsp butter", "3 cloves garlic", "1½ cups orzo", "½ cup grated parmesan", "A few sprigs fresh parsley", "Olive oil, salt, pepper"],
       "uses": [
-        { "item": "½ lb green beans, raw", "from": "Night 1 — bag of green beans" },
-        { "item": "¼ cup garlic-parmesan butter", "from": "Night 2 — Pesto Pasta" }
+        { "item": "½ red onion", "from": "Night 2 — Quesadillas" }
       ],
       "saves": [],
       "prep": [
-        { "t": "Prep everything first", "kid": true, "min": 9,
-          "det": ["Loosely form 1.5 lb ground beef into 6 balls — don’t pack them (salt just before they hit the pan)", "Wash and trim ½ lb green beans, toss with the garlic-parm butter + a little oil on a sheet pan", "Open the can of baked beans", "Set out the cheddar, buns, and BBQ sauce — now it’s all grab-and-go"] }
+        { "t": "Prep everything first", "kid": true, "min": 10,
+          "det": ["Pat the thighs bone-dry with paper towels — dry skin is the whole trick", "Salt them on both sides and leave them out while you do the rest", "Snap or trim the woody ends off 1 lb asparagus", "Slice the ½ red onion from last night into thin wedges", "Zest 1 lemon and cut it into wedges; slice the second into thin rounds", "Grate 3 cloves garlic and chop the parsley", "Melt 4 tbsp butter and stir in the garlic and lemon zest", "Heat the oven to 425°F"] }
       ],
       "cook": [
-        { "t": "Roast the green beans", "off": true, "timer": 18, "min": 18,
-          "det": ["425°F until blistered, about 18 min", "Shake the pan halfway"] },
-        { "t": "Warm the baked beans", "off": true, "timer": 8, "min": 8,
-          "det": ["1 can baked beans in a small pot", "Low heat, stir now and then"] },
-        { "t": "Smash and sear the burgers", "timer": 8, "min": 8,
-          "det": ["Screaming-hot griddle or cast iron", "Smash each ball flat, then salt", "2–3 min, flip, cheddar on top", "Toast brioche buns in the butter"] },
-        { "t": "Build the burgers", "kid": true, "min": 5,
-          "det": ["Cheddar burger on a toasted bun", "Optional: brown-sugar BBQ sauce — CHECK LABEL for apple/cider", "Serve with green beans and baked beans"] }
+        { "t": "Sear the thighs skin-down", "timer": 14, "min": 14,
+          "det": ["Thighs skin-down in a cold, dry cast-iron skillet, then turn the heat to medium-high", "Starting cold renders the fat instead of seizing the skin", "12–14 min undisturbed — no poking, no peeking", "The skin releases on its own when it's ready"] },
+        { "t": "Flip and finish in the oven", "off": true, "timer": 15, "min": 15,
+          "det": ["Flip skin-up, tuck the lemon rounds around them", "Brush with the lemon-garlic butter — hold back about a third for the orzo", "425°F for 12–15 min, to 175°F internal"] },
+        { "t": "Roast the asparagus and onion", "off": true, "timer": 12, "min": 12,
+          "det": ["Asparagus and red onion on a sheet pan, olive oil, salt, pepper", "Same 425°F oven, on the rack below the chicken"] },
+        { "t": "Boil the orzo", "off": true, "timer": 9, "min": 9,
+          "det": ["Well-salted water, 1½ cups orzo, 8–9 min", "Reserve ¼ cup of the water, then drain"] },
+        { "t": "Dress the orzo", "min": 5,
+          "det": ["Orzo + the reserved lemon-garlic butter", "Splash of the pasta water and ½ cup parmesan", "Stir until glossy, then most of the parsley", "Salt and pepper to taste"] },
+        { "t": "Rest and plate", "kid": true, "min": 5,
+          "det": ["Rest the thighs 5 min — skin-up so it stays crisp", "Orzo down first, chicken and vegetables on top", "The rest of the parsley and a lemon wedge each"] }
       ],
-      "leftovers": ["Cooked patties keep 3 days.", "Lunch: burger over green beans, or chopped into a rice bowl.", "Reheat the beans with a splash of water."]
+      "leftovers": ["Fridge up to 4 days.", "Lunch: chop the chicken into the orzo with an extra squeeze of lemon.", "Reheat in a hot dry pan skin-down to bring the crisp back — the microwave will ruin it."]
     }
   ],
   "items": [
-    { "id": "thighs",     "n": "Bone-in, skin-on chicken thighs", "q": "4 lb",          "sec": "meat",    "store": "lunds",  "p": 15.96, "note": "Smoke Night 1; shred 1¼ lb for Night 2" },
-    { "id": "beef",       "n": "Ground beef (80/20)",             "q": "1.5 lb",        "sec": "meat",    "store": "lunds",  "p": 9.74 },
-    { "id": "gbeans",     "n": "Green beans",                     "q": "1.5 lb",        "sec": "produce", "store": "tj",     "p": 3.99,  "note": "1 lb roast Night 1, ½ lb roast Night 3" },
-    { "id": "potatoes",   "n": "Baby potatoes",                   "q": "1.5 lb",        "sec": "produce", "store": "tj",     "p": 3.49 },
-    { "id": "broccoli",   "n": "Broccoli",                        "q": "1 head",        "sec": "produce", "store": "tj",     "p": 2.49 },
+    { "id": "pork",       "n": "Boneless pork shoulder (butt), untrimmed", "q": "3 lb",        "sec": "meat",    "store": "lunds",  "p": 14.97, "note": "Smoke Night 1; 1 lb pulled goes to Night 2" },
+    { "id": "thighs",     "n": "Bone-in, skin-on chicken thighs", "q": "2.5 lb (6)",    "sec": "meat",    "store": "lunds",  "p": 9.98 },
+    { "id": "corn",       "n": "Sweet corn",                      "q": "5 ears",        "sec": "produce", "store": "tj",     "p": 2.50,  "note": "3 roast Night 1, 2 charred Night 2" },
+    { "id": "asparagus",  "n": "Asparagus",                       "q": "1 lb",          "sec": "produce", "store": "tj",     "p": 3.49 },
+    { "id": "redonion",   "n": "Red onion",                       "q": "1",             "sec": "produce", "store": "tj",     "p": 0.89,  "note": "½ Night 2, ½ Night 3" },
+    { "id": "cilantro",   "n": "Cilantro",                        "q": "1 small bunch", "sec": "produce", "store": "tj",     "p": 0.99 },
+    { "id": "parsley",    "n": "Flat-leaf parsley",               "q": "1 small bunch", "sec": "produce", "store": "tj",     "p": 0.99 },
+    { "id": "limes",      "n": "Limes",                           "q": "2",             "sec": "produce", "store": "tj",     "p": 0.60 },
+    { "id": "lemons",     "n": "Lemons",                          "q": "2",             "sec": "produce", "store": "tj",     "p": 1.00 },
     { "id": "garlic",     "n": "Garlic",                          "q": "1 head",        "sec": "produce", "store": "tj",     "p": 0.79 },
+    { "id": "jackched",   "n": "Shredded Monterey Jack & cheddar","q": "1 bag (8 oz)",  "sec": "dairy",   "store": "target", "p": 3.99 },
     { "id": "parm",       "n": "Parmesan",                        "q": "1 wedge (~6 oz)","sec": "dairy",  "store": "target", "p": 6.99 },
-    { "id": "cheddar",    "n": "Sliced cheddar",                  "q": "1 pack",        "sec": "dairy",   "store": "target", "p": 3.99 },
-    { "id": "butter",     "n": "Butter",                          "q": "1 lb",          "sec": "dairy",   "store": "target", "p": 4.99, "staple": true },
-    { "id": "peas",       "n": "Frozen peas",                     "q": "1 bag",         "sec": "frozen",  "store": "target", "p": 2.29 },
-    { "id": "pesto",      "n": "Basil pesto",                     "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 3.99 },
-    { "id": "pasta",      "n": "Angel hair pasta",                "q": "12 oz",         "sec": "pantry",  "store": "target", "p": 1.99 },
+    { "id": "sourcream",  "n": "Sour cream",                      "q": "1 small tub",   "sec": "dairy",   "store": "target", "p": 2.29 },
+    { "id": "butter",     "n": "Butter",                          "q": "1 lb",          "sec": "dairy",   "store": "target", "p": 4.99,  "staple": true },
     { "id": "buns",       "n": "Brioche burger buns",             "q": "1 pack (6)",    "sec": "pantry",  "store": "target", "p": 4.49 },
+    { "id": "tortillas",  "n": "Large flour tortillas",           "q": "1 pack (8)",    "sec": "pantry",  "store": "target", "p": 3.29 },
     { "id": "bakedbeans", "n": "Baked beans",                     "q": "1 can",         "sec": "pantry",  "store": "target", "p": 2.29 },
-    { "id": "bbq",        "n": "Brown-sugar BBQ sauce",           "q": "1 bottle",      "sec": "pantry",  "store": "target", "p": 3.99, "warn": true, "note": "CHECK LABEL: no apple, apple juice, or cider vinegar" },
-    { "id": "oil",        "n": "Olive oil",                       "q": "1 bottle",      "sec": "pantry",  "store": "target", "p": 9.99, "staple": true },
-    { "id": "gpowder",    "n": "Garlic powder",                   "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 2.99, "staple": true },
-    { "id": "paprika",    "n": "Paprika",                         "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 3.99, "staple": true },
-    { "id": "chips",      "n": "Smoker wood chips / pellets",     "q": "1 bag",         "sec": "pantry",  "store": "target", "p": 6.99, "staple": true },
-    { "id": "saltpepper", "n": "Kosher salt & black pepper",      "q": "as needed",     "sec": "pantry",  "store": "target", "p": 5.99, "staple": true }
+    { "id": "blackbeans", "n": "Black beans",                     "q": "1 can",         "sec": "pantry",  "store": "target", "p": 1.19 },
+    { "id": "orzo",       "n": "Orzo",                            "q": "1 box",         "sec": "pantry",  "store": "target", "p": 2.29 },
+    { "id": "bbq",        "n": "Sweet Baby Ray’s BBQ sauce",      "q": "1 bottle",      "sec": "pantry",  "store": "target", "p": 3.49,  "warn": true, "note": "CHECK LABEL: no apple, apple juice, or cider vinegar" },
+    { "id": "brownsugar", "n": "Brown sugar",                     "q": "1 bag",         "sec": "pantry",  "store": "target", "p": 2.99,  "staple": true },
+    { "id": "paprika",    "n": "Sweet paprika",                   "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 3.99,  "staple": true },
+    { "id": "gpowder",    "n": "Garlic powder",                   "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 2.99,  "staple": true },
+    { "id": "opowder",    "n": "Onion powder",                    "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 2.99,  "staple": true },
+    { "id": "mpowder",    "n": "Mustard powder",                  "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 3.49,  "staple": true },
+    { "id": "yelmustard", "n": "Yellow mustard",                  "q": "1 bottle",      "sec": "pantry",  "store": "target", "p": 2.49,  "staple": true },
+    { "id": "chili",      "n": "Chili powder",                    "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 3.49,  "staple": true },
+    { "id": "cumin",      "n": "Ground cumin",                    "q": "1 jar",         "sec": "pantry",  "store": "target", "p": 3.49,  "staple": true },
+    { "id": "saltpepper", "n": "Kosher salt & black pepper",      "q": "as needed",     "sec": "pantry",  "store": "target", "p": 5.99,  "staple": true },
+    { "id": "oil",        "n": "Olive oil",                       "q": "1 bottle",      "sec": "pantry",  "store": "target", "p": 9.99,  "staple": true },
+    { "id": "foil",       "n": "Heavy-duty aluminum foil",        "q": "1 roll",        "sec": "pantry",  "store": "target", "p": 5.49,  "staple": true },
+    { "id": "chips",      "n": "Smoker wood chips / pellets",     "q": "1 bag",         "sec": "pantry",  "store": "target", "p": 6.99,  "staple": true }
   ]
 }

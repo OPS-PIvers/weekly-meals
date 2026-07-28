@@ -50,6 +50,7 @@ Effort definitions (rough guide):
 - Greek cuisine _(confirm: cuisine-wide, or specific dishes?)_
 - Yogurt
 - Slaw
+- **Fish & seafood** — confirmed 2026-07-28. Salmon was proposed and vetoed outright ("oh god no fish"). Treat as category-wide; don't propose fish or shellfish.
 
 _(Add the rest from Paul's known vetoes — this list is intentionally short until confirmed.)_
 
