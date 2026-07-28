@@ -89,41 +89,43 @@
       "leftovers": ["Fridge up to 3 days.", "Reheat in a dry pan, not the microwave — the tortilla goes soft otherwise.", "Lunch: cut cold into wedges with the leftover crema."]
     },
     {
-      "id": "lemon-garlic-salmon",
+      "id": "crispy-lemon-herb-chicken",
       "cuisine": "Mediterranean",
-      "name": "Lemon-Garlic Butter Salmon Sheet Pan",
+      "name": "Crispy Lemon-Herb Chicken Thighs",
       "effort": "Med",
       "activeMin": 18,
       "defaultServe": "18:00",
       "servesNote": "5–6",
-      "blurb": "Salmon, asparagus, and red onion on one pan with lemon-garlic butter, over parmesan orzo.",
-      "ingredients": ["1½ lb salmon fillet, skin-on", "1 lb asparagus", "½ red onion from Night 2", "2 lemons", "4 tbsp butter", "3 cloves garlic", "1½ cups orzo", "½ cup grated parmesan", "A few sprigs fresh parsley", "Olive oil, salt, pepper"],
+      "blurb": "Skin-shattering skillet-to-oven thighs with roasted asparagus and lemon-garlic parmesan orzo.",
+      "ingredients": ["2½ lb bone-in, skin-on chicken thighs (6)", "1 lb asparagus", "½ red onion from Night 2", "2 lemons", "4 tbsp butter", "3 cloves garlic", "1½ cups orzo", "½ cup grated parmesan", "A few sprigs fresh parsley", "Olive oil, salt, pepper"],
       "uses": [
         { "item": "½ red onion", "from": "Night 2 — Quesadillas" }
       ],
       "saves": [],
       "prep": [
-        { "t": "Prep everything first", "kid": true, "min": 9,
-          "det": ["Snap or trim the woody ends off 1 lb asparagus", "Slice the ½ red onion from last night into thin wedges", "Zest 1 lemon, then cut it into wedges; slice the second lemon into thin rounds", "Grate 3 cloves garlic and chop the parsley", "Melt 4 tbsp butter and stir in the garlic and lemon zest", "Pat the salmon dry and cut it into 5 portions", "Heat the oven to 425°F"] }
+        { "t": "Prep everything first", "kid": true, "min": 10,
+          "det": ["Pat the thighs bone-dry with paper towels — dry skin is the whole trick", "Salt them on both sides and leave them out while you do the rest", "Snap or trim the woody ends off 1 lb asparagus", "Slice the ½ red onion from last night into thin wedges", "Zest 1 lemon and cut it into wedges; slice the second into thin rounds", "Grate 3 cloves garlic and chop the parsley", "Melt 4 tbsp butter and stir in the garlic and lemon zest", "Heat the oven to 425°F"] }
       ],
       "cook": [
-        { "t": "Roast the asparagus and onion", "off": true, "timer": 8, "min": 8,
-          "det": ["Asparagus and red onion on the sheet pan, olive oil, salt, pepper", "425°F for 8 min to get a head start"] },
+        { "t": "Sear the thighs skin-down", "timer": 14, "min": 14,
+          "det": ["Thighs skin-down in a cold, dry cast-iron skillet, then turn the heat to medium-high", "Starting cold renders the fat instead of seizing the skin", "12–14 min undisturbed — no poking, no peeking", "The skin releases on its own when it's ready"] },
+        { "t": "Flip and finish in the oven", "off": true, "timer": 15, "min": 15,
+          "det": ["Flip skin-up, tuck the lemon rounds around them", "Brush with the lemon-garlic butter — hold back about a third for the orzo", "425°F for 12–15 min, to 175°F internal"] },
+        { "t": "Roast the asparagus and onion", "off": true, "timer": 12, "min": 12,
+          "det": ["Asparagus and red onion on a sheet pan, olive oil, salt, pepper", "Same 425°F oven, on the rack below the chicken"] },
         { "t": "Boil the orzo", "off": true, "timer": 9, "min": 9,
           "det": ["Well-salted water, 1½ cups orzo, 8–9 min", "Reserve ¼ cup of the water, then drain"] },
-        { "t": "Add the salmon and finish the pan", "off": true, "timer": 12, "min": 12,
-          "det": ["Push the vegetables to the edges, salmon skin-down in the middle", "Brush the salmon generously with the lemon-garlic butter — save about a third for the orzo", "Lay the lemon rounds over the top", "Back to 425°F for 10–12 min, until it flakes at the thickest part"] },
         { "t": "Dress the orzo", "min": 5,
           "det": ["Orzo + the reserved lemon-garlic butter", "Splash of the pasta water and ½ cup parmesan", "Stir until glossy, then most of the parsley", "Salt and pepper to taste"] },
-        { "t": "Plate", "kid": true, "min": 4,
-          "det": ["Orzo down first, salmon and vegetables on top", "The rest of the parsley and a lemon wedge each"] }
+        { "t": "Rest and plate", "kid": true, "min": 5,
+          "det": ["Rest the thighs 5 min — skin-up so it stays crisp", "Orzo down first, chicken and vegetables on top", "The rest of the parsley and a lemon wedge each"] }
       ],
-      "leftovers": ["Fridge up to 2 days — salmon is the short-clock one this week.", "Lunch: flake the cold salmon into the orzo with an extra squeeze of lemon.", "Reheat gently or not at all; it dries out fast."]
+      "leftovers": ["Fridge up to 4 days.", "Lunch: chop the chicken into the orzo with an extra squeeze of lemon.", "Reheat in a hot dry pan skin-down to bring the crisp back — the microwave will ruin it."]
     }
   ],
   "items": [
     { "id": "pork",       "n": "Boneless pork shoulder (butt), untrimmed", "q": "3 lb",        "sec": "meat",    "store": "lunds",  "p": 14.97, "note": "Smoke Night 1; 1 lb pulled goes to Night 2" },
-    { "id": "salmon",     "n": "Salmon fillet, skin-on",          "q": "1.5 lb",        "sec": "meat",    "store": "lunds",  "p": 19.49 },
+    { "id": "thighs",     "n": "Bone-in, skin-on chicken thighs", "q": "2.5 lb (6)",    "sec": "meat",    "store": "lunds",  "p": 9.98 },
     { "id": "corn",       "n": "Sweet corn",                      "q": "5 ears",        "sec": "produce", "store": "tj",     "p": 2.50,  "note": "3 roast Night 1, 2 charred Night 2" },
     { "id": "asparagus",  "n": "Asparagus",                       "q": "1 lb",          "sec": "produce", "store": "tj",     "p": 3.49 },
     { "id": "redonion",   "n": "Red onion",                       "q": "1",             "sec": "produce", "store": "tj",     "p": 0.89,  "note": "½ Night 2, ½ Night 3" },

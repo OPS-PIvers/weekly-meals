@@ -50,6 +50,7 @@ Effort definitions (rough guide):
 - Greek cuisine _(confirm: cuisine-wide, or specific dishes?)_
 - Yogurt
 - Slaw
+- **Fish & seafood** — confirmed 2026-07-28. Salmon was proposed and vetoed outright ("oh god no fish"). Treat as category-wide; don't propose fish or shellfish.
 
 _(Add the rest from Paul's known vetoes — this list is intentionally short until confirmed.)_
 
@@ -74,4 +75,4 @@ _(Grow this as weeks are approved.)_
 
 > Items that are on neither list. When one comes up in planning, ask Paul first, then move his answer into IN or OUT here as part of the PR.
 
-- **Salmon** — first appearance, week of 2026-08-03 (lemon-garlic butter sheet pan). Move to IN or OUT once the family has eaten it.
+_(empty — populate as questions get answered)_
