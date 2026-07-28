@@ -74,4 +74,4 @@ _(Grow this as weeks are approved.)_
 
 > Items that are on neither list. When one comes up in planning, ask Paul first, then move his answer into IN or OUT here as part of the PR.
 
-_(empty — populate as questions get answered)_
+- **Salmon** — first appearance, week of 2026-08-03 (lemon-garlic butter sheet pan). Move to IN or OUT once the family has eaten it.
